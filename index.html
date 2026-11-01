@@ -187,8 +187,8 @@
         <p class="small">Based in Germany. Wherever you are,<br>we'll find a time that works.</p>
       </div>
       <!-- Later: replace action with your own Formspree endpoint -->
-      <!-- Messages are delivered by Formspree to the Gmail address of the account: replace YOUR-ID with the form ID from formspree.io -->
-      <form id="form" action="https://formspree.io/f/YOUR-ID" method="POST">
+      <!-- Messages are delivered by Formspree to the Gmail address of the account (form xwllrgdw on formspree.io) -->
+      <form id="form" action="https://formspree.io/f/xwllrgdw" method="POST">
         <input type="hidden" name="_subject" value="New enquiry via nachmitternacht.de">
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
         <label>Name<input name="name" required autocomplete="name"></label>
@@ -310,7 +310,6 @@
   const form = document.getElementById("form"), note = document.getElementById("note");
   form.addEventListener("submit", async e => {
     e.preventDefault();
-    if (form.action.includes("YOUR-ID")) { note.textContent = "The form is not connected yet."; return; }
     const button = form.querySelector("button");
     button.disabled = true;
     note.textContent = "Sending …";
