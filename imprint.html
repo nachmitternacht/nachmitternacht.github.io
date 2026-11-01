@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imprint &amp; Privacy — nach.mitternacht</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="fonts/fonts.css">
+<!-- TEMPORARY until launch: password screen -->
+<script src="gate.js"></script>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #151515;
+    --muted: #9a9a9a;
+    --line: #e4e4e4;
+    --gutter: clamp(16px, 2.6vw, 40px);
+    --sans: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+    --hand: "Zeyada", cursive;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--fg); font: 500 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+
+  /* Same header as the start page */
+  .top { position: fixed; inset: 0 0 auto 0; z-index: 10; display: flex; justify-content: space-between; align-items: baseline; padding: 22px var(--gutter) 14px; background: var(--bg); }
+  /* logo set in Bergamot (images/logo-bergamot-medium.png); the crayon version is kept as images/logo.png */
+  .logo { line-height: 0; }
+  .logo img { width: 193px; height: auto; }
+  .nav { display: flex; gap: 15px; font-size: 14px; }
+
+  main { padding: 0 var(--gutter); }
+
+
+  /* Sections built like the shop: a small label, then full-width rows between fine lines */
+  /* like About / Contact / Shop on the start page: each section fills (at least) one screen, content centred */
+  section { min-height: 100vh; padding: 76px 0 32px; display: flex; flex-direction: column; justify-content: center; }
+  .label { font-size: 15px; margin-bottom: 1.4em; }
+  .rows { list-style: none; }
+  .rows li { display: grid; grid-template-columns: 1fr 2fr; gap: var(--gutter); padding: 11px 0; border-top: 1px solid var(--line); }
+  .rows li:last-child { border-bottom: 1px solid var(--line); }
+  .rows .term { font-size: 14px; }
+  .rows .term small { display: block; font-size: 13px; color: var(--muted); }
+  .rows .def { font-size: 14px; line-height: 1.5; max-width: 52rem; }
+  .rows .def p + p { margin-top: .7em; }
+  .rows .def .muted { color: var(--muted); }
+  .todo { color: var(--muted); } /* placeholders still to be filled in */
+
+  /* Hover on clickable text: a slight zoom, like the rest of the site */
+  .nav a, .logo, footer a, .def a { display: inline-block; }
+  .nav a, .logo, footer a, .def a { transition: transform .4s cubic-bezier(.2, .7, .2, 1); }
+  .nav a:hover, .logo:hover, footer a:hover, .def a:hover { transform: scale(1.02); }
+  .logo, .def a { transform-origin: left center; }
+  footer a { transform-origin: right center; }
+  .def a { border-bottom: 1px solid var(--line); }
+
+  footer { margin-top: 0; padding: 20px var(--gutter) 28px; font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  /* social links: their own line above copyright and imprint, with the same ↗ as "Checkout via Gumroad" */
+  footer .social { flex-basis: 100%; display: flex; gap: 22px; }
+  footer .social a::after { content: " ↗"; }
+  footer .social a { transform-origin: left center; }
+
+  @media (max-width: 760px) {
+    .top { flex-wrap: wrap; gap: 6px; }
+    .nav { gap: 10px; }
+    .rows li { grid-template-columns: 1fr; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="logo" href="index.html"><img src="images/logo-bergamot-medium.png" alt="nach.mitternacht" width="193" height="32"></a>
+  <nav class="nav">
+    <a href="index.html#work">Work</a><a href="index.html#about">About</a><a href="index.html#contact">Contact</a><a href="index.html#shop">Shop</a>
+  </nav>
+</header>
+
+<main>
+  <!-- Grey text in [brackets] are placeholders that still need your real details -->
+  <section id="imprint-section" aria-labelledby="imprint">
+    <p class="label" id="imprint">Imprint</p>
+    <ul class="rows">
+      <li><span class="term">Provider<small>Information according to § 5 DDG</small></span>
+        <div class="def"><p>Oskar Werts<br>nach.mitternacht<br>Von-Buol-Str. 28<br>91054 Erlangen<br>Germany</p></div></li>
+      <li><span class="term">Contact</span>
+        <div class="def"><p>Email: <a href="mailto:nachmitternacht.visuals@gmail.com">nachmitternacht.visuals@gmail.com</a><br>Contact form: <a href="https://forms.gle/tK7EABXMcU2aGUJW9" target="_blank" rel="noopener">forms.gle/tK7EABXMcU2aGUJW9</a></p></div></li>
+      <li><span class="term">Business identification number<small>Wirtschafts-Identifikationsnummer, § 139c AO</small></span>
+        <div class="def"><p>DE465738852-00001</p></div></li>
+      <li><span class="term">Responsible for content<small>§ 18 (2) MStV</small></span>
+        <div class="def"><p>Oskar Werts, address as above</p></div></li>
+      <li><span class="term">Consumer dispute resolution</span>
+        <div class="def"><p>I am neither willing nor obliged to take part in dispute resolution proceedings before a consumer arbitration board.</p></div></li>
+      <li><span class="term">Liability for content</span>
+        <div class="def"><p>The contents of this website were created with great care. However, no guarantee can be given for their accuracy, completeness or timeliness. As a service provider I am responsible for my own content on these pages in accordance with general law (§ 7 (1) DDG).</p></div></li>
+      <li><span class="term">Liability for links</span>
+        <div class="def"><p>This website contains links to external websites (e.g. Gumroad), whose content I have no influence on. The respective provider is always responsible for the content of linked pages. If I become aware of any legal infringements, such links will be removed immediately.</p></div></li>
+      <li><span class="term">Copyright</span>
+        <div class="def"><p>All images, visualisations and texts on this website are © nach.mitternacht and protected by German copyright law. Any use, reproduction or distribution requires prior written permission.</p></div></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="privacy">
+    <p class="label" id="privacy">Privacy</p>
+    <ul class="rows">
+      <li><span class="term">Controller<small>Art. 4 (7) GDPR</small></span>
+        <div class="def"><p>The person named in the imprint above is responsible for processing personal data on this website.</p></div></li>
+      <li><span class="term">Hosting &amp; server logs</span>
+        <div class="def"><p>This website is hosted on GitHub Pages, a service of GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. When you visit it, GitHub automatically stores technical data such as your IP address, date and time, the page requested and your browser type. This is necessary to deliver the site securely and is based on Art. 6 (1) (f) GDPR.</p>
+          <p>Data may be transferred to the USA. GitHub is certified under the EU–US Data Privacy Framework. For details see GitHub's privacy statement.</p></div></li>
+      <li><span class="term">Contact form &amp; email</span>
+        <div class="def"><p>If you get in touch, the details you provide (name, email, project stage, message) are processed only to answer your enquiry (Art. 6 (1) (b) GDPR) and are deleted once they are no longer needed.</p>
+          <p>The contact form is delivered by Formspree (Formspree, Inc., USA), which forwards your message to my email inbox (Google Gmail). Data may therefore be transferred to the USA; this is based on the providers' standard contractual clauses and, where applicable, the EU–US Data Privacy Framework.</p></div></li>
+      <li><span class="term">Fonts</span>
+        <div class="def"><p>The font Inter Tight is served directly from this website. No connection to external font services (such as Google Fonts) is made, and no data is passed on.</p></div></li>
+      <li><span class="term">Shop</span>
+        <div class="def"><p>The shop is run on Gumroad (Gumroad, Inc., USA). No data is transferred to Gumroad until you click a shop link. From then on, Gumroad's own privacy policy applies.</p></div></li>
+      <li><span class="term">Cookies &amp; tracking</span>
+        <div class="def"><p>This website sets no cookies and uses no analytics or tracking tools.</p></div></li>
+      <li><span class="term">Your rights</span>
+        <div class="def"><p>You have the right to access, rectification, erasure, restriction of processing, data portability and objection (Art. 15–21 GDPR), and to lodge a complaint with a data protection supervisory authority. Just send an email to the address above.</p></div></li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <nav class="social" aria-label="Social media">
+    <a href="https://www.instagram.com/nach.mitternacht/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://www.youtube.com/@nach.mitternacht" target="_blank" rel="noopener">YouTube</a>
+    <a href="https://www.tiktok.com/@nach.mitternacht" target="_blank" rel="noopener">TikTok</a>
+  </nav>
+  <span>© 2026 nach.mitternacht · Based in Germany</span>
+  <a href="imprint.html">Imprint &amp; Privacy</a>
+</footer>
+
+<script src="cursor.js"></script>
+</body>
+</html>

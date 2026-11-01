@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project — nach.mitternacht</title>
+<meta name="robots" content="noindex"> <!-- TEMPORARY until launch -->
+<link rel="stylesheet" href="fonts/fonts.css">
+<!-- TEMPORARY until launch: password screen -->
+<script src="gate.js"></script>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #151515;
+    --muted: #9a9a9a;
+    --line: #e4e4e4;
+    --gutter: clamp(16px, 2.6vw, 40px);
+    --sans: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+    --hand: "Zeyada", cursive;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--fg); font: 500 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+
+  /* Same header as the start page */
+  .top { position: fixed; inset: 0 0 auto 0; z-index: 10; display: flex; justify-content: space-between; align-items: baseline; padding: 22px var(--gutter) 14px; background: var(--bg); }
+  /* logo set in Bergamot (images/logo-bergamot-medium.png); the crayon version is kept as images/logo.png */
+  .logo { line-height: 0; }
+  .logo img { width: 193px; height: auto; }
+  .nav { display: flex; gap: 15px; font-size: 14px; }
+
+
+  /* Project: info column on the left (stays in view), images on the right */
+  /* info takes whatever the images leave free; the image column is only as wide as its largest image */
+  .project { --img: min(calc(100vh - 140px), calc(100vw - 2 * var(--gutter) - 320px)); display: grid; grid-template-columns: minmax(280px, 1fr) auto; gap: var(--gutter); padding: 120px var(--gutter) 0; }
+  /* sticks exactly where it starts (= the section's top padding), so it never shifts while scrolling */
+  .info { position: sticky; top: 120px; align-self: start; display: grid; gap: 28px; padding-right: var(--gutter); }
+  .num { font-size: 14px; color: var(--muted); }
+  h1 { font-size: 24px; font-weight: 500; letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; line-height: 1.3; }
+  .details { display: grid; grid-template-columns: 7rem 1fr; font-size: 14px; border-top: 1px solid var(--line); }
+  .details dt, .details dd { padding: 7px 0; border-bottom: 1px solid var(--line); }
+  .details dt { color: var(--muted); }
+  .text { font-size: 15px; }
+  .back { font-size: 14px; }
+
+  /* images flush right, on the same line as the right end of the navigation */
+  .images { display: grid; gap: var(--gutter); justify-items: end; }
+  .ph { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; }
+  /* each image fits on the screen in one piece; wide ones (e.g. floor plans) are no wider than the square ones */
+  /* sized from the photo's ratio (--r): fits inside an --img square, space is reserved before it loads */
+  .photo { display: block; aspect-ratio: var(--r); width: min(var(--img), calc(var(--img) * var(--r))); height: auto; }
+  .ph.tall { aspect-ratio: 4 / 5; width: 70%; }
+  .ph.wide { aspect-ratio: 16 / 9; }
+  .ph span { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: rgba(255,255,255,.75); }
+
+  /* Next project */
+  .next { margin: 22vh var(--gutter) 0; padding-top: 18px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 2fr; gap: var(--gutter); }
+  /* the next project's title ends flush right, on the same line as "Shop" and the images */
+  .next a { justify-self: end; text-align: right; }
+  .next .label { font-size: 14px; color: var(--muted); }
+  .next .name { display: inline-block; font-size: 24px; letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; line-height: 1.3; }
+
+  /* Hover on clickable text: a slight zoom, like the images — no colour change */
+  .nav a, .logo, footer a, .back { display: inline-block; }
+  .nav a, .logo, footer a, .back, .next .name {
+    transition: transform .4s cubic-bezier(.2, .7, .2, 1); }
+  .nav a:hover, .logo:hover, footer a:hover, .back:hover, .next a:hover .name {
+    transform: scale(1.02); }
+  .logo, .back { transform-origin: left center; }
+  footer a, .next .name { transform-origin: right center; }
+
+  /* small bounce at the page end (see script) */
+  /* spring-like: lifts, settles back with a tiny, fading overshoot */
+  @keyframes bounce {
+    0%   { transform: none; animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
+    28%  { transform: translateY(-10px); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+    62%  { transform: translateY(1.5px); animation-timing-function: cubic-bezier(.45, 0, .55, 1); }
+    84%  { transform: translateY(-.5px); }
+    100% { transform: none; }
+  }
+  .bounce #main, .bounce footer { animation: bounce .75s; }
+
+  footer { margin-top: 18vh; padding: 20px var(--gutter) 28px; font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  /* social links: their own line above copyright and imprint, with the same ↗ as "Checkout via Gumroad" */
+  footer .social { flex-basis: 100%; display: flex; gap: 22px; }
+  footer .social a::after { content: " ↗"; }
+  footer .social a { transform-origin: left center; }
+
+  @media (max-width: 760px) {
+    .top { flex-wrap: wrap; gap: 6px; }
+    .nav { gap: 10px; }
+    .project { --img: 100%; grid-template-columns: 1fr; padding-top: 110px; }
+    .photo { width: 100%; }
+    .info { position: static; margin-bottom: 20px; }
+    h1, .next .name { font-size: 19px; letter-spacing: .22em; margin-right: 0; }
+    .ph.tall { width: 100%; }
+    .next { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="logo" href="index.html"><img src="images/logo-bergamot-medium.png" alt="nach.mitternacht" width="193" height="32"></a>
+  <nav class="nav">
+    <a href="index.html#work">Work</a><a href="index.html#about">About</a><a href="index.html#contact">Contact</a><a href="index.html#shop">Shop</a>
+  </nav>
+</header>
+
+<main id="main"></main>
+
+<footer>
+  <nav class="social" aria-label="Social media">
+    <a href="https://www.instagram.com/nach.mitternacht/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://www.youtube.com/@nach.mitternacht" target="_blank" rel="noopener">YouTube</a>
+    <a href="https://www.tiktok.com/@nach.mitternacht" target="_blank" rel="noopener">TikTok</a>
+  </nav>
+  <span>© 2026 nach.mitternacht · Based in Germany</span>
+  <a href="imprint.html">Imprint &amp; Privacy</a>
+</footer>
+
+<script src="projects.js"></script>
+<script>
+  // Soft page end: when scrolling down reaches the bottom ("next project"), the page does one
+  // small bounce instead of stopping dead. Triggered once per arrival, not on every wheel tick.
+  (() => {
+    let lastY = scrollY, wasAtBottom = false;
+    addEventListener("scroll", () => {
+      const atBottom = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+      if (atBottom && !wasAtBottom && scrollY > lastY) {
+        document.body.classList.remove("bounce");
+        void document.body.offsetWidth; // restart the animation
+        document.body.classList.add("bounce");
+      }
+      wasAtBottom = atBottom;
+      lastY = scrollY;
+    }, { passive: true });
+  })();
+</script>
+<script src="cursor.js"></script>
+<script>
+  // Which project? project.html?p=<slug>
+  const slug = new URLSearchParams(location.search).get("p");
+  const i = PROJECTS.findIndex(p => p.slug === slug);
+  const main = document.getElementById("main");
+
+  if (i < 0) {
+    main.innerHTML = `<section class="project"><div class="info">
+      <h1>Not found</h1><a class="back" href="index.html#work">← All projects</a></div></section>`;
+  } else {
+    const p = PROJECTS[i];
+    const next = PROJECTS[(i + 1) % PROJECTS.length];
+    const pad = n => String(n + 1).padStart(2, "0");
+    document.title = `${p.title} — nach.mitternacht`;
+
+    // real photos are shown uncropped; placeholder projects get their preview format first, then further images
+    const shots = p.photos
+      ? p.photos.map((src, k) => `<img class="photo" src="${src}" style="--r:${p.ratios[k]}" alt="${p.title}, image ${k + 1}" decoding="async"${k ? ' loading="lazy"' : ""}>`).join("")
+      : [p.shape, ...p.images].map((shape, k) =>
+          `<div class="ph ${shape}" role="img" aria-label="Placeholder: ${p.title}, image ${k + 1}"
+             style="background:${paintPlaceholder(p.colors, i + k * 3)}"><span>Image ${k + 1}</span></div>`).join("");
+
+    // only the details that are filled in
+    const details = [["Category", p.category], ["Services", (p.services || []).join("<br>")], ["Location", p.location], ["Year", p.year]]
+      .filter(([, value]) => value)
+      .map(([label, value]) => `<dt>${label}</dt><dd>${value}</dd>`).join("");
+
+    main.innerHTML = `
+      <section class="project">
+        <div class="info">
+          <p class="num">(${pad(i)})</p>
+          <h1>${p.title}</h1>
+          ${details ? `<dl class="details">${details}</dl>` : ""}
+          ${p.text ? `<p class="text">${p.text}</p>` : ""}
+          <a class="back" href="index.html#work">← All projects</a>
+        </div>
+        <div class="images">${shots}</div>
+      </section>
+
+      <section class="next">
+        <p class="label">Next project</p>
+        <a href="project.html?p=${next.slug}">
+          <span class="name">${next.title} →</span>
+        </a>
+      </section>`;
+  }
+</script>
+</body>
+</html>

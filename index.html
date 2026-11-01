@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nach.mitternacht — Architectural Images</title>
+<meta name="description" content="nach.mitternacht – images for architecture, made after dark. Based in Germany, happy to work with you, wherever you are.">
+<meta name="robots" content="noindex"> <!-- TEMPORARY until launch -->
+<link rel="stylesheet" href="fonts/fonts.css">
+<!-- TEMPORARY until launch: password screen -->
+<script src="gate.js"></script>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #151515;
+    --muted: #9a9a9a;
+    --line: #e4e4e4;
+    --gutter: clamp(16px, 2.6vw, 40px);
+    --sans: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+    --hand: "Zeyada", cursive;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--fg); font: 500 17px/1.4 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+
+  /* Header: logo left, navigation right */
+  .top { position: fixed; inset: 0 0 auto 0; z-index: 10; display: flex; justify-content: space-between; align-items: baseline; padding: 22px var(--gutter) 14px; background: var(--bg); }
+  /* logo set in Bergamot (images/logo-bergamot-medium.png); the crayon version is kept as images/logo.png */
+  .logo { line-height: 0; }
+  .logo img { width: 193px; height: auto; }
+  .nav { display: flex; gap: 15px; font-size: 14px; }
+
+  section { scroll-margin-top: 70px; }
+  main > section:not(.hero) { padding-left: var(--gutter); padding-right: var(--gutter); }
+  .label { font-size: 15px; margin-bottom: 1.4em; }
+  .lead { max-width: 30rem; font-size: 21px; line-height: 1.3; }
+  .lead p + p { margin-top: .8em; }
+  .small { font-size: 15px; color: var(--muted); }
+  .block { padding-top: 22vh; }
+  /* About, Contact and Shop each fill exactly one screen: jumping there from the menu shows only that section */
+  .block.screen { min-height: 100vh; padding: 80px var(--gutter) 40px; display: flex; flex-direction: column; justify-content: center; scroll-margin-top: 0; }
+  .block.screen > * { width: 100%; }
+
+  /* ---------- Start screen: title block centered, location and scroll hint in the corners ---------- */
+  .hero { position: relative; height: 100vh; min-height: 520px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px var(--gutter); }
+  .hero-text { display: grid; justify-items: center; gap: 18px; text-align: center; }
+  /* narrow column: the text grows downwards rather than sideways; the title is sized to this width (fitTitle) */
+  .intro { width: min(26em, 100%); font-size: 17px; line-height: 1.6; margin: 4px 0 0; text-align: justify; text-align-last: center; hyphens: manual; }
+  .hero .scroll { position: absolute; right: var(--gutter); bottom: 28px; font-size: 14px; }
+  .title { position: relative; font-size: 20px; font-weight: 500; letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; line-height: 1.25; white-space: nowrap; z-index: 2; }
+  /* anchored to the "M" of IMAGES */
+  .note-anchor { position: relative; }
+  /* "after midnight" set in Bergamot, as an image (images/after-midnight-medium.png) */
+  .hand-note { position: absolute; left: -.1em; bottom: 62%; width: 230px; max-width: none; height: auto; transform: rotate(-6deg); transform-origin: left bottom; pointer-events: none; }
+  .based { font-size: 14px; }
+  .hero .based { position: absolute; left: var(--gutter); bottom: 28px; max-width: calc(100% - 2 * var(--gutter) - 90px); font-size: 14px; line-height: 1.6; }
+  .based .soft { color: var(--muted); }
+
+
+  /* ---------- Work: staggered gallery ---------- */
+  .works { display: grid; gap: 16vh; padding-top: 16vh; }
+  .work { margin: 0; width: 50%; }
+  /* right-hand images sit flush with the right margin, mirroring the left-hand ones */
+  .work:nth-child(3n+2) { justify-self: end; width: 42%; }
+  .work:nth-child(3n+2) a { display: flex; flex-direction: column; align-items: flex-end; }
+  .work:nth-child(3n) { margin-left: 25%; width: 38%; }
+  .work a { display: block; }
+  .ph { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; }
+  /* real photos: the frame takes the photo's own proportions, so nothing is cropped */
+  /* ...and is never taller than the screen (minus the header), so it can be seen in one piece */
+  /* the frame is sized from the photo's ratio (--r) before the image loads, so nothing jumps while scrolling */
+  .ph.natural { aspect-ratio: var(--r); width: min(100%, calc((100vh - 160px) * var(--r))); }
+  .ph .img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(.2, .7, .2, 1); will-change: transform; }
+  /* while the page is scrolling, hover effects pause so nothing animates under the moving pointer */
+  .is-scrolling main { pointer-events: none; }
+  .work a:hover .img, .work a:focus-visible .img { transform: scale(1.03); }
+  .ph.tall { aspect-ratio: 4 / 5; }
+  .ph.wide { aspect-ratio: 16 / 9; }
+  .ph span { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: rgba(255,255,255,.75); letter-spacing: .04em; }
+  figcaption { font-size: 14px; margin-top: 8px; }
+  figcaption em { font-style: normal; color: var(--muted); }
+
+  /* ---------- Index: project list with hover preview ---------- */
+  .index { list-style: none; }
+  .index a { display: grid; grid-template-columns: 3rem 1fr auto; gap: var(--gutter); padding: 10px 0; border-top: 1px solid var(--line); font-size: 15px; color: var(--muted); }
+  .index li:last-child a { border-bottom: 1px solid var(--line); }
+  .index a b { font-weight: inherit; color: var(--fg); }
+  .peek { position: fixed; z-index: 5; width: 220px; aspect-ratio: 4 / 3; pointer-events: none; opacity: 0; transition: opacity .15s; }
+
+
+  /* ---------- Contact ---------- */
+  .contact { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); }
+  form { display: grid; gap: 18px; max-width: 34rem; }
+  label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
+  input, textarea, select { font: inherit; color: var(--fg); background: transparent; border: 0; border-bottom: 1px solid var(--line); padding: 6px 0; border-radius: 0; outline: none; transition: border-color .2s; }
+  input:focus, textarea:focus, select:focus { border-bottom-color: var(--fg); }
+  textarea { min-height: 7em; resize: vertical; }
+  button { justify-self: start; font: inherit; background: none; border: 0; border-bottom: 1px solid currentColor; padding: 0 0 2px; color: var(--fg); }
+  .note { font-size: 14px; color: var(--muted); min-height: 1.4em; }
+
+  /* ---------- Shop ---------- */
+  .products { list-style: none; }
+  /* fixed columns so name, description and price line up from row to row */
+  .products a { display: grid; grid-template-columns: 1fr 1fr 12rem; gap: var(--gutter); align-items: baseline; padding: 18px 0; border-top: 1px solid var(--line); }
+  .products li:last-child a { border-bottom: 1px solid var(--line); }
+  .products a:hover .go { transform: translateX(6px) scale(1.02); }
+  .products .name { font-size: 21px; }
+  .products .desc { font-size: 15px; color: var(--muted); }
+  .products .go { font-size: 15px; transition: transform .2s; white-space: nowrap; text-align: right; }
+  .ext::after { content: " ↗"; }
+
+  /* Hover on clickable text: a slight zoom, like the images — no colour change */
+  .nav a, .logo, .scroll, footer a, .ext, button { display: inline-block; }
+  .nav a, .logo, .scroll, footer a, .ext, button, figcaption, .index a > *, .products a > * {
+    transition: transform .4s cubic-bezier(.2, .7, .2, 1); }
+  .nav a:hover, .logo:hover, .scroll:hover, footer a:hover, .ext:hover, button:hover,
+  .work a:hover figcaption, .index a:hover > *, .products a:hover > * {
+    transform: scale(1.02); }
+  .logo, figcaption, .index a > *, .products .name, .products .desc { transform-origin: left center; }
+  .scroll, footer a, .products .go { transform-origin: right center; }
+
+  footer { margin-top: 0; padding: 20px var(--gutter) 28px; font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  /* social links: their own line above copyright and imprint, with the same ↗ as "Checkout via Gumroad" */
+  footer .social { flex-basis: 100%; display: flex; gap: 22px; }
+  footer .social a::after { content: " ↗"; }
+  footer .social a { transform-origin: left center; }
+
+  @media (max-width: 720px) {
+    .nav { gap: 10px; }
+    .top { flex-wrap: wrap; gap: 6px; }
+    .hero .intro { width: 62vw; } /* leaves room for the note to break out on the right */
+    .hand-note { width: 160px; }
+    .works { gap: 10vh; padding-top: 10vh; }
+    .work, .work:nth-child(3n) { width: 100%; margin-left: 0; }
+    .work:nth-child(3n+2) { width: 80%; }
+    .contact { grid-template-columns: 1fr; }
+    .index a { grid-template-columns: 2rem 1fr; }
+    .index a span:last-child { display: none; }
+    .products a { grid-template-columns: 1fr auto; }
+    .products .desc { grid-column: 1; grid-row: 2; }
+    .peek { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="logo" href="#"><img src="images/logo-bergamot-medium.png" alt="nach.mitternacht" width="193" height="32"></a>
+  <nav class="nav">
+    <a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a><a href="#shop">Shop</a>
+  </nav>
+</header>
+
+<main>
+  <!-- Start screen: title block centered, location bottom left, scroll hint bottom right -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1 class="title">Architectural I<span class="note-anchor">mages<img class="hand-note" src="images/after-midnight-medium.png" alt="after midnight" width="230" height="63"></span></h1>
+      <p class="intro">Visualisations that step away from the clean, generic render. Light, material and weather are layered with care, until each image feels quiet, considered and&nbsp;atmospheric.</p>
+    </div>
+    <p class="based">Based in Germany — <span class="soft">happy to work with you, wherever you are.</span></p>
+    <a class="scroll" href="#work">( Scroll )</a>
+  </section>
+
+  <section id="work" class="works" aria-label="Selected work"></section>
+
+  <section id="index-section" class="block" aria-label="Project index">
+    <p class="label">Index</p>
+    <ul class="index" id="index"></ul>
+  </section>
+
+  <section id="about" class="block screen about">
+    <p class="label">About</p>
+    <div class="lead">
+      <p>nach.mitternacht — German for “after midnight” — is a small studio for architectural visualisation, based in Germany.</p>
+      <p>The name stands for the quiet hours when the real work happens: the dedication to stay with a project long after midnight, until every detail is right.</p>
+      <p>A visualisation here is more than a quick render. It starts with understanding the project, then slowly building a visual language, layer by layer, that tells the design exactly as it was meant.</p>
+    </div>
+  </section>
+
+  <section id="contact" class="block screen">
+    <p class="label">Contact</p>
+    <div class="contact">
+      <div class="lead">
+        <p>Tell me about your project — stage, deadline, number of views. I usually reply within two working days.</p>
+        <p class="small">Based in Germany. Wherever you are,<br>we'll find a time that works.</p>
+      </div>
+      <!-- Later: replace action with your own Formspree endpoint -->
+      <!-- Messages are delivered by Formspree to the Gmail address of the account: replace YOUR-ID with the form ID from formspree.io -->
+      <form id="form" action="https://formspree.io/f/YOUR-ID" method="POST">
+        <input type="hidden" name="_subject" value="New enquiry via nachmitternacht.de">
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+        <label>Name<input name="name" required autocomplete="name"></label>
+        <label>Email<input name="email" type="email" required autocomplete="email"></label>
+        <label>Project stage
+          <select name="stage">
+            <option>Competition</option>
+            <option>Planning</option>
+            <option>Marketing</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>Message<textarea name="message" required></textarea></label>
+        <button type="submit">Send →</button>
+        <p class="note" id="note" role="status"></p>
+      </form>
+    </div>
+  </section>
+
+  <section id="shop" class="block screen">
+    <p class="label">Shop</p>
+    <div class="lead" style="margin-bottom: 2em">
+      <p>Tools from my own workflow — brushes, textures and overlays for Photoshop.</p>
+    </div>
+    <ul class="products">
+      <li><a href="https://nachmitternacht.gumroad.com/" target="_blank" rel="noopener">
+        <span class="name">Essentials Kit Vol. 01</span>
+        <span class="desc">Brushes · Textures · Overlays</span>
+        <span class="go">€9 →</span></a></li>
+      <li><a href="https://nachmitternacht.gumroad.com/" target="_blank" rel="noopener">
+        <span class="name">Free Sample</span>
+        <span class="desc">A taste of Vol. 01</span>
+        <span class="go">Pay what you want →</span></a></li>
+    </ul>
+    <p class="small" style="margin-top: 1em">Checkout via <a class="ext" href="https://nachmitternacht.gumroad.com/" target="_blank" rel="noopener">Gumroad</a></p>
+  </section>
+</main>
+
+<footer>
+  <nav class="social" aria-label="Social media">
+    <a href="https://www.instagram.com/nach.mitternacht/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://www.youtube.com/@nach.mitternacht" target="_blank" rel="noopener">YouTube</a>
+    <a href="https://www.tiktok.com/@nach.mitternacht" target="_blank" rel="noopener">TikTok</a>
+  </nav>
+  <span>© 2026 nach.mitternacht · Based in Germany</span>
+  <a href="imprint.html">Imprint &amp; Privacy</a>
+</footer>
+
+<div class="peek" id="peek" aria-hidden="true"></div>
+
+<script src="projects.js"></script>
+<script src="cursor.js"></script>
+<script>
+  // Gallery and index are built from projects.js; each entry links to its project page
+  const grid = document.getElementById("work");
+  const index = document.getElementById("index");
+  const peek = document.getElementById("peek");
+  PROJECTS.forEach((p, i) => {
+    const n = String(i + 1).padStart(2, "0");
+    const url = `project.html?p=${p.slug}`;
+    const meta = projectMeta(p);
+    const f = document.createElement("figure");
+    f.className = "work";
+    f.innerHTML = `<a href="${url}">
+      <div class="ph ${p.photos ? "natural" : p.shape}"${p.photos ? ` style="--r:${p.ratios[0]}"` : ""}>${p.photos
+        ? `<img class="img" src="${previewSrc(p)}" alt="${p.title}" loading="lazy" decoding="async">`
+        : `<div class="img" role="img" aria-label="Placeholder: ${p.title}" style="background:${paintPlaceholder(p.colors, i)}"></div><span>Image ${n}</span>`}</div>
+      <figcaption>${p.title}${meta ? ` <em>— ${meta}</em>` : ""}</figcaption></a>`;
+    grid.appendChild(f);
+
+    const li = document.createElement("li");
+    li.innerHTML = `<a href="${url}"><span>${n}</span><b>${p.title}</b><span>${meta}</span></a>`;
+    const a = li.firstElementChild;
+    a.onmouseenter = () => { peek.style.background = previewBackground(p, i); peek.style.opacity = 1; };
+    a.onmouseleave = () => { peek.style.opacity = 0; };
+    a.onmousemove = e => { peek.style.left = e.clientX + 24 + "px"; peek.style.top = e.clientY - 80 + "px"; };
+    index.appendChild(li);
+  });
+
+  // While scrolling: hide the index preview and pause hover effects until the page has come to rest
+  let scrollTimer;
+  addEventListener("scroll", () => {
+    peek.style.opacity = 0;
+    document.body.classList.add("is-scrolling");
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => document.body.classList.remove("is-scrolling"), 150);
+  }, { passive: true });
+
+  // "Work" brings the first project into the middle of the screen (below the header), uncut
+  const showFirstWork = smooth => {
+    const fig = document.querySelector(".work");
+    const head = document.querySelector(".top").offsetHeight;
+    const r = fig.getBoundingClientRect();
+    const free = innerHeight - head;
+    scrollTo({ top: scrollY + r.top - head - Math.max(0, (free - r.height) / 2), behavior: smooth ? "smooth" : "instant" });
+  };
+  document.querySelectorAll('a[href="#work"]').forEach(a => a.addEventListener("click", e => {
+    e.preventDefault();
+    history.replaceState(null, "", "#work");
+    showFirstWork(true);
+  }));
+  // arriving from another page via index.html#work
+  if (location.hash === "#work") addEventListener("load", () => showFirstWork(false));
+
+  // Start screen: size the title so its letters span exactly the width of the text column below
+  const fitTitle = () => {
+    const title = document.querySelector(".hero .title");
+    const column = document.querySelector(".hero .intro").getBoundingClientRect().width;
+    title.style.fontSize = "100px";
+    // the box includes tracking after the last letter, which isn't visible
+    const visible = title.getBoundingClientRect().width - parseFloat(getComputedStyle(title).letterSpacing);
+    title.style.fontSize = (100 * column / visible) + "px";
+  };
+  document.fonts.ready.then(fitTitle);
+  addEventListener("resize", fitTitle);
+
+
+  // Contact form: sent in the background to Formspree, so the visitor stays on the page and only the note below changes
+  const form = document.getElementById("form"), note = document.getElementById("note");
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (form.action.includes("YOUR-ID")) { note.textContent = "The form is not connected yet."; return; }
+    const button = form.querySelector("button");
+    button.disabled = true;
+    note.textContent = "Sending …";
+    try {
+      const res = await fetch(form.action, { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } });
+      if (!res.ok) throw new Error(res.status);
+      form.reset();
+      note.textContent = "Thank you — your message is on its way. I'll get back to you soon.";
+    } catch {
+      note.textContent = "Something went wrong. Please write to nachmitternacht.visuals@gmail.com instead.";
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
