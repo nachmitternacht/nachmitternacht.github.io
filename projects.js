@@ -32,7 +32,7 @@ window.PROJECTS = [
     shape: "", photos: ["images/office/scene-01.jpg"], ratios: [0.8289]
   },
   {
-    slug: "sailing-house", title: "Sailing House", category: "Personal work", year: 2026,
+    slug: "sailing-house", title: "Sailing House", category: "University project", year: 2026,
     location: "", services: ["Exterior view"],
     text: "A long, dark timber house on the edge of a quiet lake, where the boats are kept and set out from. Mist, wind-swept grass and a low sky let the building almost dissolve into the landscape.",
     shape: "", photos: ["images/sailing-house/scene-01.jpg"], ratios: [0.7072]
