@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- list of all pages for search engines; add a line when a new project is added -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://nachmitternacht.de/</loc></url>
+  <url><loc>https://nachmitternacht.de/project.html?p=longhouse</loc></url>
+  <url><loc>https://nachmitternacht.de/project.html?p=cafe</loc></url>
+  <url><loc>https://nachmitternacht.de/project.html?p=bathing-house</loc></url>
+  <url><loc>https://nachmitternacht.de/project.html?p=office</loc></url>
+  <url><loc>https://nachmitternacht.de/project.html?p=sailing-house</loc></url>
+  <url><loc>https://nachmitternacht.de/project.html?p=corner-cafe</loc></url>
+  <url><loc>https://nachmitternacht.de/project.html?p=kitchen</loc></url>
+  <url><loc>https://nachmitternacht.de/imprint.html</loc></url>
+</urlset>

@@ -68,3 +68,13 @@ window.previewBackground = (project, variant) => project.photos
 
 // "Category, Year" without gaps when one of them is still empty
 window.projectMeta = project => [project.category, project.year].filter(Boolean).join(", ");
+
+// <img> markup for a photo (kept in one place so the format can be changed later)
+window.picture = (src, attrs) => `<img src="${src}" ${attrs}>`;
+
+// Images with class "fade" fade in once loaded (ones already in the browser's cache simply appear)
+window.fadeIn = root => root.querySelectorAll("img.fade").forEach(img => {
+  const done = () => img.classList.add("loaded");
+  if (img.complete && img.naturalWidth) done();
+  else { img.addEventListener("load", done, { once: true }); img.addEventListener("error", done, { once: true }); }
+});

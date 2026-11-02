@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Imprint &amp; Privacy — nach.mitternacht</title>
 <meta name="robots" content="noindex">
+<meta name="description" content="nach.mitternacht is a small studio for architectural visualisation, based in Germany — happy to work with you, wherever you are.">
+<!-- icon in the browser tab and on phone home screens -->
+<link rel="icon" href="images/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="images/favicon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<!-- preview card when the link is shared (WhatsApp, iMessage, LinkedIn …) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="nach.mitternacht">
+<meta property="og:title" content="Imprint & Privacy — nach.mitternacht">
+<meta property="og:description" content="nach.mitternacht is a small studio for architectural visualisation, based in Germany — happy to work with you, wherever you are.">
+<meta property="og:url" content="https://nachmitternacht.de/imprint.html">
+<meta property="og:image" content="https://nachmitternacht.de/images/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="fonts/fonts.css">
 <!-- TEMPORARY until launch: password screen -->
 <script src="gate.js"></script>
@@ -70,6 +85,14 @@
     .nav { gap: 10px; line-height: 1; }
     .rows li { grid-template-columns: 1fr; gap: 6px; }
   }
+
+  /* soft cross-fade between pages (browsers without support simply switch); the header stays in place */
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; }
+  .top { view-transition-name: top; }
+  /* images fade in once loaded instead of appearing line by line */
+  img.fade { opacity: 0; transition: opacity .8s ease; }
+  img.fade.loaded { opacity: 1; }
 </style>
 </head>
 <body>
@@ -138,6 +161,6 @@
   <a href="imprint.html">Imprint &amp; Privacy</a>
 </footer>
 
-<script src="cursor.js?v=2"></script>
+<script src="cursor.js?v=3"></script>
 </body>
 </html>
