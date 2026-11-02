@@ -17,7 +17,6 @@
     --line: #e4e4e4;
     --gutter: clamp(16px, 2.6vw, 40px);
     --sans: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
-    --hand: "Zeyada", cursive;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   /* no CSS smooth scrolling: in-page links glide with their own, calmer easing (glideTo in the script below) */
@@ -121,6 +120,8 @@
 
   button { justify-self: start; font: inherit; background: none; border: 0; border-bottom: 1px solid currentColor; padding: 0 0 2px; color: var(--fg); }
   .note { font-size: 14px; color: var(--muted); min-height: 1.4em; }
+  .privacy { font-size: 13px; color: var(--muted); margin-top: -8px; }
+  .privacy a { border-bottom: 1px solid var(--line); }
 
   /* ---------- Shop ---------- */
   .products { list-style: none; }
@@ -236,6 +237,7 @@
         </div>
         <label>Message<textarea name="message" rows="1" required></textarea></label>
         <button type="submit">Send →</button>
+        <p class="privacy">Your details are only used to answer your enquiry — see <a href="imprint.html#privacy">Privacy</a>.</p>
         <p class="note" id="note" role="status"></p>
       </form>
     </div>
