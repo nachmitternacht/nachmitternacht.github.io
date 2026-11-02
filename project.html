@@ -50,6 +50,17 @@
   /* sized from the photo's ratio (--r): fits inside an --img square, space is reserved before it loads */
   .photo { display: block; aspect-ratio: var(--r); width: min(var(--img), calc(var(--img) * var(--r))); height: auto; }
   .ph.tall { aspect-ratio: 4 / 5; width: 70%; }
+  /* Day / evening: both versions lie on top of each other and cross-fade; a small moon (or sun) below the image switches them */
+  .daynight { position: relative; display: grid; justify-items: end; gap: 10px; }
+  .daynight .stack { position: relative; }
+  .daynight .stack .photo + .photo { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease; }
+  .daynight.is-evening .stack .photo + .photo { opacity: 1; }
+  .daynight .toggle { width: 16px; height: 16px; padding: 0; border: 0; background: none; color: var(--muted); line-height: 0;
+                      transition: color .3s, transform .4s cubic-bezier(.2, .7, .2, 1); }
+  .daynight .toggle:hover, .daynight .toggle:focus-visible { color: var(--fg); transform: scale(1.1); outline: none; }
+  .daynight .toggle svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; }
+  .daynight .sun, .daynight.is-evening .moon { display: none; }
+  .daynight.is-evening .sun { display: block; }
   .ph.wide { aspect-ratio: 16 / 9; }
   .ph span { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: rgba(255,255,255,.75); }
 
@@ -161,7 +172,17 @@
 
     // real photos are shown uncropped; placeholder projects get their preview format first, then further images
     const shots = p.photos
-      ? p.photos.map((src, k) => `<img class="photo" src="${src}" style="--r:${p.ratios[k]}" alt="${p.title}, image ${k + 1}" decoding="async"${k ? ' loading="lazy"' : ""}>`).join("")
+      ? p.photos.map((src, k) => {
+          const img = `<img class="photo" src="${src}" style="--r:${p.ratios[k]}" alt="${p.title}, image ${k + 1}" decoding="async"${k ? ' loading="lazy"' : ""}>`;
+          const evening = p.evening && p.evening[k];
+          // with an evening version: day shown first, the evening image waits underneath until the moon is clicked
+          return evening ? `<div class="daynight">
+              <div class="stack">${img}<img class="photo" src="${evening}" style="--r:${p.ratios[k]}" alt="${p.title}, image ${k + 1}, evening" decoding="async" loading="lazy" aria-hidden="true"></div>
+              <button class="toggle" type="button" aria-label="Show the evening scene">
+                <svg class="moon" viewBox="0 0 16 16"><path d="M13.5 10.2A6 6 0 0 1 5.8 2.5a6 6 0 1 0 7.7 7.7z"/></svg>
+                <svg class="sun" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15M3 3l1.1 1.1M11.9 11.9 13 13M3 13l1.1-1.1M11.9 4.1 13 3"/></svg>
+              </button></div>` : img;
+        }).join("")
       : [p.shape, ...p.images].map((shape, k) =>
           `<div class="ph ${shape}" role="img" aria-label="Placeholder: ${p.title}, image ${k + 1}"
              style="background:${paintPlaceholder(p.colors, i + k * 3)}"><span>Image ${k + 1}</span></div>`).join("");
@@ -189,6 +210,17 @@
           <span class="name">${next.title} →</span>
         </a>
       </section>`;
+
+    // moon ↔ sun: switch between the day and the evening scene
+    main.querySelectorAll(".daynight").forEach(box => {
+      const button = box.querySelector(".toggle"), [day, evening] = box.querySelectorAll(".photo");
+      button.addEventListener("click", () => {
+        const on = box.classList.toggle("is-evening");
+        button.setAttribute("aria-label", on ? "Show the day scene" : "Show the evening scene");
+        day.toggleAttribute("aria-hidden", on);
+        evening.toggleAttribute("aria-hidden", !on);
+      });
+    });
   }
 </script>
 </body>

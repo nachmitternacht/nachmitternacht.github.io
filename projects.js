@@ -1,6 +1,7 @@
 // Project data shared by the start page (gallery + index) and project.html.
 //   photos: real images (the first one is the preview in the gallery); empty fields are simply left out
 //   ratios: width / height of each photo, so the page can reserve the space before the image has loaded
+//   evening: (optional) an evening version of each photo; the project page shows a small moon / sun to switch between them
 //   shape:  format of the preview frame ("" = 4:3, "tall" = 4:5, "wide" = 16:9)
 // Projects without photos (none at the moment) would be shown as placeholders and then need:
 //   colors: [sky, haze, ground] for the placeholder gradients
@@ -11,6 +12,13 @@ window.PROJECTS = [
     location: "", services: ["Concept & floor plan", "Interior views"],
     text: "A home for a couple, closely tied to the nature around it. The project was followed from the first sketch through the floor plan to the final images — shaped by natural materials, warm wood and soft daylight.",
     shape: "tall", photos: ["images/longhouse/scene-01.jpg"], ratios: [0.7778]
+  },
+  {
+    slug: "corner-cafe", title: "Corner Café", category: "Personal work", year: 2026,
+    location: "", services: ["Exterior view, day & evening"],
+    text: "A small café on a street corner in the city centre, seen twice: in the bustle of an autumn afternoon, and again in the evening, once the street has gone quiet.",
+    shape: "", photos: ["images/corner-cafe/scene-01.jpg"], ratios: [1.7778],
+    evening: ["images/corner-cafe/scene-01-evening.jpg"]
   },
   {
     slug: "cafe", title: "Café", category: "Personal work", year: 2026,
