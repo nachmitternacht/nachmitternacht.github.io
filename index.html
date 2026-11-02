@@ -66,6 +66,9 @@
   .work:nth-child(3n+2) { justify-self: end; width: 42%; }
   .work:nth-child(3n+2) a { display: flex; flex-direction: column; align-items: flex-end; }
   .work:nth-child(3n) { margin-left: 25%; width: 38%; }
+  /* wide (landscape) images would look small in these columns, so they get more room */
+  .work.landscape, .work.landscape:nth-child(3n+2) { width: 62%; }
+  .work.landscape:nth-child(3n) { margin-left: 18%; width: 62%; }
   .work a { display: block; }
   .ph { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; }
   /* real photos: the frame takes the photo's own proportions, so nothing is cropped */
@@ -163,7 +166,7 @@
     .hero .based .soft { display: block; }
     .hero .scroll { font-size: 13px; }
     .works { gap: 10vh; padding-top: 10vh; }
-    .work, .work:nth-child(3n) { width: 100%; margin-left: 0; }
+    .work, .work:nth-child(3n), .work.landscape, .work.landscape:nth-child(n) { width: 100%; margin-left: 0; }
     .work:nth-child(3n+2) { width: 80%; }
     .contact { grid-template-columns: 1fr; }
     .index a { grid-template-columns: 2rem 1fr; }
@@ -281,7 +284,7 @@
     const url = `project.html?p=${p.slug}`;
     const meta = projectMeta(p);
     const f = document.createElement("figure");
-    f.className = "work";
+    f.className = p.photos && p.ratios[0] > 1.4 ? "work landscape" : "work";
     f.innerHTML = `<a href="${url}">
       <div class="ph ${p.photos ? "natural" : p.shape}"${p.photos ? ` style="--r:${p.ratios[0]}"` : ""}>${p.photos
         ? `<img class="img" src="${previewSrc(p)}" alt="${p.title}" loading="lazy" decoding="async">`
