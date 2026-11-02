@@ -21,6 +21,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="fonts/fonts.css">
+<script src="night.js?v=2"></script>
 <!-- TEMPORARY until launch: password screen -->
 <script src="gate.js"></script>
 <style>
@@ -238,12 +239,16 @@
     // moon ↔ sun: switch between the day and the evening scene
     main.querySelectorAll(".daynight").forEach(box => {
       const button = box.querySelector(".toggle"), [day, evening] = box.querySelectorAll(".photo");
-      button.addEventListener("click", () => {
-        const on = box.classList.toggle("is-evening");
+      const set = on => {
+        box.classList.toggle("is-evening", on);
         button.setAttribute("aria-label", on ? "Show the day scene" : "Show the evening scene");
         day.toggleAttribute("aria-hidden", on);
         evening.toggleAttribute("aria-hidden", !on);
-      });
+      };
+      button.addEventListener("click", () => set(!box.classList.contains("is-evening")));
+      // in night mode the evening scene is shown from the start, and switching the mode switches the scene too
+      set(document.documentElement.classList.contains("night"));
+      addEventListener("nightchange", e => set(e.detail));
     });
   }
 </script>
