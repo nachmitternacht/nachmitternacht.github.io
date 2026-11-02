@@ -39,7 +39,7 @@
   // timed by the clock so it feels the same on 60 Hz and 120 Hz screens; moved with a GPU transform, so the page never re-lays out
   const place = () => { dot.style.transform = `translate3d(${dx}px, ${dy}px, 0)`; };
   const step = now => {
-    const t = 1 - Math.exp(-(now - last) / 45); // about 45 ms to close most of the gap
+    const t = 1 - Math.exp(-(now - last) / 16); // about 16 ms to close most of the gap
     last = now;
     dx += (x - dx) * t; dy += (y - dy) * t;
     if (Math.abs(x - dx) < .1 && Math.abs(y - dy) < .1) { dx = x; dy = y; running = false; }
