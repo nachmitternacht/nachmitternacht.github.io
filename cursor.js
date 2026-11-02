@@ -1,12 +1,14 @@
 // Custom cursor shared by all pages: a small dark dot that follows the mouse.
 // Over anything clickable (links, buttons, project images) it turns into a milky, see-through disc of the same size.
+// Over text fields it disappears and the normal text cursor takes over.
+// When the mouse leaves the page (browser bar, other windows, switching desktops) the dot fades out instead of waiting at the edge.
 // Only on devices with a real mouse — touch screens keep their normal behaviour.
 (() => {
   if (!matchMedia("(pointer: fine)").matches) return;
 
   const style = document.createElement("style");
   style.textContent = `
-    html, a, button, select, label { cursor: none; }
+    html, a, button, select, label, .select, .select * { cursor: none; }
     input, textarea { cursor: text; }
     .cursor-dot {
       position: fixed; left: -7px; top: -7px; z-index: 1000; pointer-events: none; will-change: transform;
@@ -27,25 +29,38 @@
   dot.setAttribute("aria-hidden", "true");
   document.body.appendChild(dot);
 
-  // moved with a GPU transform once per frame, so it never triggers a page re-layout
-  let x = 0, y = 0, queued = false;
+  const CLICKABLE = "a, button, select, .select", TEXT = "input, textarea";
+  let x = 0, y = 0, queued = false, inside = false, overText = false;
+
+  // the dot is only visible while the mouse is on the page and not over a text field
+  const update = () => dot.classList.toggle("is-hidden", !inside || overText);
+
+  // moved with a GPU transform once per frame, so it never triggers a page re-layout;
+  // it is shown in the same frame it is moved, so it never flashes at an old position
   addEventListener("mousemove", e => {
     x = e.clientX; y = e.clientY;
     if (!queued) {
       queued = true;
       requestAnimationFrame(() => {
         dot.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        inside = true;
+        update();
         queued = false;
       });
     }
-    dot.classList.remove("is-hidden");
   }, { passive: true });
 
   addEventListener("mouseover", e => {
     const t = e.target;
-    dot.classList.toggle("is-link", !!t.closest("a, button, select, label"));
-    dot.classList.toggle("is-hidden", !!t.closest("input, textarea")); // text fields show the text cursor instead
+    dot.classList.toggle("is-link", !!t.closest(CLICKABLE));
+    overText = !!t.closest(TEXT);
+    update();
   });
 
-  document.addEventListener("mouseleave", () => dot.classList.add("is-hidden"));
+  // leaving the page: out of the window, into the browser bar, or the window losing focus / being hidden
+  const leave = () => { inside = false; update(); };
+  addEventListener("mouseout", e => { if (!e.relatedTarget) leave(); });
+  document.addEventListener("mouseleave", leave);
+  addEventListener("blur", leave);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) leave(); });
 })();

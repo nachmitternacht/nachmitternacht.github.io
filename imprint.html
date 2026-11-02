@@ -19,7 +19,6 @@
     --hand: "Zeyada", cursive;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
   body { background: var(--bg); color: var(--fg); font: 500 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
   a { color: inherit; text-decoration: none; }
 
@@ -58,12 +57,18 @@
   footer { margin-top: 0; padding: 20px var(--gutter) 28px; font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
   /* social links: their own line above copyright and imprint, with the same ↗ as "Checkout via Gumroad" */
   footer .social { flex-basis: 100%; display: flex; gap: 22px; }
-  footer .social a::after { content: " ↗"; }
+  /* ↗ drawn as a small line arrow, as tall as the capitals (the font has no ↗, phones would show an emoji) */
+  footer .social a::after {
+    content: ""; display: inline-block; width: .65em; height: .65em; margin-left: .3em; background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none' stroke='black' stroke-width='1.1'%3E%3Cpath d='M1.5 8.5 8.5 1.5M3 1.5h5.5V7'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none' stroke='black' stroke-width='1.1'%3E%3Cpath d='M1.5 8.5 8.5 1.5M3 1.5h5.5V7'/%3E%3C/svg%3E") center / contain no-repeat; }
   footer .social a { transform-origin: left center; }
 
   @media (max-width: 760px) {
-    .top { flex-wrap: wrap; gap: 6px; }
-    .nav { gap: 10px; }
+    /* smaller logo, its bottom in line with the bottom of the menu words */
+    .top { flex-wrap: wrap; gap: 6px; align-items: flex-end; }
+    .logo img { width: 140px; }
+    .nav { gap: 10px; line-height: 1; }
     .rows li { grid-template-columns: 1fr; gap: 6px; }
   }
 </style>

@@ -20,7 +20,7 @@
     --hand: "Zeyada", cursive;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  /* no CSS smooth scrolling: in-page links glide with their own, calmer easing (glideTo in the script below) */
   body { background: var(--bg); color: var(--fg); font: 500 17px/1.4 var(--sans); -webkit-font-smoothing: antialiased; }
   a { color: inherit; text-decoration: none; }
 
@@ -39,16 +39,17 @@
   .small { font-size: 15px; color: var(--muted); }
   .block { padding-top: 22vh; }
   /* About, Contact and Shop each fill exactly one screen: jumping there from the menu shows only that section */
-  .block.screen { min-height: 100vh; padding: 80px var(--gutter) 40px; display: flex; flex-direction: column; justify-content: center; scroll-margin-top: 0; }
+  .block.screen { min-height: 100vh; min-height: 100svh; padding: 80px var(--gutter) 40px; display: flex; flex-direction: column; justify-content: center; scroll-margin-top: 0; }
   .block.screen > * { width: 100%; }
 
   /* ---------- Start screen: title block centered, location and scroll hint in the corners ---------- */
-  .hero { position: relative; height: 100vh; min-height: 520px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px var(--gutter); }
+  /* svh = the screen height with the phone's browser bars showing, so the corner texts are visible on first load */
+  .hero { position: relative; height: 100vh; height: 100svh; min-height: 520px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px var(--gutter); }
   .hero-text { display: grid; justify-items: center; gap: 18px; text-align: center; }
   /* narrow column: the text grows downwards rather than sideways; the title is sized to this width (fitTitle) */
   .intro { width: min(26em, 100%); font-size: 17px; line-height: 1.6; margin: 4px 0 0; text-align: justify; text-align-last: center; hyphens: manual; }
   .hero .scroll { position: absolute; right: var(--gutter); bottom: 28px; font-size: 14px; }
-  .title { position: relative; font-size: 20px; font-weight: 500; letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; line-height: 1.25; white-space: nowrap; z-index: 2; }
+  .title { position: relative; font-size: 20px; font-weight: 560; letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; line-height: 1.25; white-space: nowrap; z-index: 2; }
   /* anchored to the "M" of IMAGES */
   .note-anchor { position: relative; }
   /* "after midnight" set in Bergamot, as an image (images/after-midnight-medium.png) */
@@ -92,10 +93,29 @@
   /* ---------- Contact ---------- */
   .contact { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); }
   form { display: grid; gap: 18px; max-width: 34rem; }
-  label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
+  label, .field { display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
   input, textarea, select { font: inherit; color: var(--fg); background: transparent; border: 0; border-bottom: 1px solid var(--line); padding: 6px 0; border-radius: 0; outline: none; transition: border-color .2s; }
   input:focus, textarea:focus, select:focus { border-bottom-color: var(--fg); }
-  textarea { min-height: 7em; resize: vertical; }
+  /* the message field starts as one line on the fine line, like the others, and grows as you type */
+  textarea { display: block; height: auto; min-height: 0; resize: none; overflow: hidden; line-height: 1.4; }
+
+  /* Project stage: a dropdown drawn in the site's own style (the real <select> stays hidden and holds the value) */
+  .select { position: relative; color: var(--fg); }
+  .select select { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .select .current { display: flex; justify-content: space-between; align-items: baseline; width: 100%; padding: 6px 0;
+                     border: 0; border-bottom: 1px solid var(--line); text-align: left; transition: border-color .2s; }
+  .select .current::after { content: "↓"; color: var(--muted); transition: transform .3s; }
+  .select.open .current, .select .current:focus-visible { border-bottom-color: var(--fg); }
+  .select.open .current::after { transform: rotate(180deg); }
+  .select ul { position: absolute; left: 0; right: 0; top: 100%; z-index: 3; list-style: none; background: var(--bg);
+               opacity: 0; transform: translateY(-4px); pointer-events: none; transition: opacity .2s, transform .2s; }
+  .select.open ul { opacity: 1; transform: none; pointer-events: auto; }
+  .select li { padding: 9px 0; border-bottom: 1px solid var(--line); color: var(--muted); transition: color .2s; }
+  .select li:hover, .select li.active { color: var(--fg); }
+  .select li[aria-selected="true"] { color: var(--fg); }
+  /* the clickable text of the dropdown is not a "Send"-style button: no underline, no zoom */
+  form .select button.current, form .select button.current:hover { transform: none; }
+
   button { justify-self: start; font: inherit; background: none; border: 0; border-bottom: 1px solid currentColor; padding: 0 0 2px; color: var(--fg); }
   .note { font-size: 14px; color: var(--muted); min-height: 1.4em; }
 
@@ -108,7 +128,11 @@
   .products .name { font-size: 21px; }
   .products .desc { font-size: 15px; color: var(--muted); }
   .products .go { font-size: 15px; transition: transform .2s; white-space: nowrap; text-align: right; }
-  .ext::after { content: " ↗"; }
+  /* ↗ drawn as a small line arrow, as tall as the capitals (the font has no ↗, phones would show an emoji) */
+  .ext::after, footer .social a::after {
+    content: ""; display: inline-block; width: .65em; height: .65em; margin-left: .3em; background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none' stroke='black' stroke-width='1.1'%3E%3Cpath d='M1.5 8.5 8.5 1.5M3 1.5h5.5V7'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none' stroke='black' stroke-width='1.1'%3E%3Cpath d='M1.5 8.5 8.5 1.5M3 1.5h5.5V7'/%3E%3C/svg%3E") center / contain no-repeat; }
 
   /* Hover on clickable text: a slight zoom, like the images — no colour change */
   .nav a, .logo, .scroll, footer a, .ext, button { display: inline-block; }
@@ -123,14 +147,21 @@
   footer { margin-top: 0; padding: 20px var(--gutter) 28px; font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
   /* social links: their own line above copyright and imprint, with the same ↗ as "Checkout via Gumroad" */
   footer .social { flex-basis: 100%; display: flex; gap: 22px; }
-  footer .social a::after { content: " ↗"; }
   footer .social a { transform-origin: left center; }
 
   @media (max-width: 720px) {
     .nav { gap: 10px; }
-    .top { flex-wrap: wrap; gap: 6px; }
-    .hero .intro { width: 62vw; } /* leaves room for the note to break out on the right */
-    .hand-note { width: 160px; }
+    /* smaller logo, its bottom in line with the bottom of the menu words */
+    .top { align-items: flex-end; flex-wrap: wrap; gap: 6px; }
+    .logo img { width: 140px; }
+    .nav { line-height: 1; }
+    /* centred rather than justified: in such a narrow column justified lines get wide gaps */
+    .hero .intro { width: 64vw; font-size: 15px; text-align: center; } /* leaves room for the note to break out on the right */
+    .hand-note { width: 140px; }
+    /* location in two even lines: "Based in Germany —" above, the rest below */
+    .hero .based { font-size: 13px; }
+    .hero .based .soft { display: block; }
+    .hero .scroll { font-size: 13px; }
     .works { gap: 10vh; padding-top: 10vh; }
     .work, .work:nth-child(3n) { width: 100%; margin-left: 0; }
     .work:nth-child(3n+2) { width: 80%; }
@@ -157,7 +188,7 @@
   <section class="hero">
     <div class="hero-text">
       <h1 class="title">Architectural I<span class="note-anchor">mages<img class="hand-note" src="images/after-midnight-medium.png" alt="after midnight" width="230" height="63"></span></h1>
-      <p class="intro">Visualisations that step away from the clean, generic render. Light, material and weather are layered with care, until each image feels quiet, considered and&nbsp;atmospheric.</p>
+      <p class="intro">Images that take their time. Light, material and weather are layered with care, until each image feels quiet, considered and&nbsp;atmospheric.</p>
     </div>
     <p class="based">Based in Germany — <span class="soft">happy to work with you, wherever you are.</span></p>
     <a class="scroll" href="#work">( Scroll )</a>
@@ -184,24 +215,23 @@
     <div class="contact">
       <div class="lead">
         <p>Tell me about your project — stage, deadline, number of views. I usually reply within two working days.</p>
-        <p class="small">Based in Germany. Wherever you are,<br>we'll find a time that works.</p>
+        <p class="small">Based in Germany, working with clients anywhere — in English or German.</p>
       </div>
-      <!-- Later: replace action with your own Formspree endpoint -->
       <!-- Messages are delivered by Formspree to the Gmail address of the account (form xwllrgdw on formspree.io) -->
       <form id="form" action="https://formspree.io/f/xwllrgdw" method="POST">
         <input type="hidden" name="_subject" value="New enquiry via nachmitternacht.de">
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
         <label>Name<input name="name" required autocomplete="name"></label>
         <label>Email<input name="email" type="email" required autocomplete="email"></label>
-        <label>Project stage
+        <div class="field" role="group" aria-label="Project stage">Project stage
           <select name="stage">
             <option>Competition</option>
             <option>Planning</option>
             <option>Marketing</option>
             <option>Other</option>
           </select>
-        </label>
-        <label>Message<textarea name="message" required></textarea></label>
+        </div>
+        <label>Message<textarea name="message" rows="1" required></textarea></label>
         <button type="submit">Send →</button>
         <p class="note" id="note" role="status"></p>
       </form>
@@ -277,21 +307,45 @@
     scrollTimer = setTimeout(() => document.body.classList.remove("is-scrolling"), 150);
   }, { passive: true });
 
+  // Menu links glide to their section: slow at both ends, longer for longer distances (the browser's own smooth scroll is abrupt over long jumps)
+  const calm = matchMedia("(prefers-reduced-motion: reduce)");
+  let glide = 0;
+  const glideTo = top => {
+    top = Math.max(0, Math.min(top, document.documentElement.scrollHeight - innerHeight));
+    const from = scrollY, dist = top - from;
+    if (calm.matches || Math.abs(dist) < 2) return scrollTo(0, top);
+    const duration = Math.min(1600, 700 + Math.abs(dist) * .12);
+    const ease = t => t < .5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+    const start = performance.now(), id = ++glide;
+    const step = now => {
+      if (id !== glide) return; // a newer click took over
+      const t = Math.min(1, (now - start) / duration);
+      scrollTo(0, from + dist * ease(t));
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  // scrolling by hand stops a glide that is still running
+  ["wheel", "touchstart", "keydown"].forEach(type => addEventListener(type, () => glide++, { passive: true }));
+
   // "Work" brings the first project into the middle of the screen (below the header), uncut
-  const showFirstWork = smooth => {
+  const firstWorkTop = () => {
     const fig = document.querySelector(".work");
     const head = document.querySelector(".top").offsetHeight;
     const r = fig.getBoundingClientRect();
     const free = innerHeight - head;
-    scrollTo({ top: scrollY + r.top - head - Math.max(0, (free - r.height) / 2), behavior: smooth ? "smooth" : "instant" });
+    return scrollY + r.top - head - Math.max(0, (free - r.height) / 2);
   };
-  document.querySelectorAll('a[href="#work"]').forEach(a => a.addEventListener("click", e => {
+  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener("click", e => {
+    const hash = a.getAttribute("href");
+    const target = hash === "#" ? document.body : document.querySelector(hash);
+    if (!target) return;
     e.preventDefault();
-    history.replaceState(null, "", "#work");
-    showFirstWork(true);
+    history.replaceState(null, "", hash === "#" ? location.pathname : hash);
+    glideTo(hash === "#work" ? firstWorkTop() : hash === "#" ? 0 : scrollY + target.getBoundingClientRect().top);
   }));
   // arriving from another page via index.html#work
-  if (location.hash === "#work") addEventListener("load", () => showFirstWork(false));
+  if (location.hash === "#work") addEventListener("load", () => scrollTo(0, firstWorkTop()));
 
   // Start screen: size the title so its letters span exactly the width of the text column below
   const fitTitle = () => {
@@ -308,6 +362,41 @@
 
   // Contact form: sent in the background to Formspree, so the visitor stays on the page and only the note below changes
   const form = document.getElementById("form"), note = document.getElementById("note");
+
+  // Message field: grows with the text instead of scrolling
+  const message = form.querySelector("textarea");
+  const fitMessage = () => { message.style.height = "auto"; message.style.height = message.scrollHeight + 1 + "px"; };
+  message.addEventListener("input", fitMessage);
+
+  // Project stage: the hidden <select> is shown as a button with a list in the site's style
+  const select = form.querySelector("select");
+  const box = document.createElement("div");
+  box.className = "select";
+  box.innerHTML = `<button type="button" class="current" aria-haspopup="listbox" aria-expanded="false"></button>
+    <ul role="listbox" tabindex="-1">${[...select.options].map(o => `<li role="option">${o.text}</li>`).join("")}</ul>`;
+  select.replaceWith(box);
+  box.prepend(select);
+  const current = box.querySelector(".current"), items = [...box.querySelectorAll("li")];
+  let active = 0;
+  const show = () => {
+    current.textContent = select.options[select.selectedIndex].text;
+    items.forEach((li, i) => { li.setAttribute("aria-selected", i === select.selectedIndex); li.classList.toggle("active", i === active); });
+  };
+  const open = yes => { box.classList.toggle("open", yes); current.setAttribute("aria-expanded", yes); active = select.selectedIndex; show(); };
+  const choose = i => { select.selectedIndex = i; open(false); current.focus(); };
+  current.addEventListener("click", () => open(!box.classList.contains("open")));
+  items.forEach((li, i) => li.addEventListener("click", () => choose(i)));
+  current.addEventListener("keydown", e => {
+    const isOpen = box.classList.contains("open");
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!isOpen) return open(true);
+      active = (active + (e.key === "ArrowDown" ? 1 : items.length - 1)) % items.length; show();
+    } else if ((e.key === "Enter" || e.key === " ") && isOpen) { e.preventDefault(); choose(active); }
+    else if (e.key === "Escape" || e.key === "Tab") open(false);
+  });
+  document.addEventListener("click", e => { if (!box.contains(e.target)) open(false); });
+  show();
   form.addEventListener("submit", async e => {
     e.preventDefault();
     const button = form.querySelector("button");
@@ -317,6 +406,7 @@
       const res = await fetch(form.action, { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } });
       if (!res.ok) throw new Error(res.status);
       form.reset();
+      fitMessage(); show();
       note.textContent = "Thank you — your message is on its way. I'll get back to you soon.";
     } catch {
       note.textContent = "Something went wrong. Please write to nachmitternacht.visuals@gmail.com instead.";
