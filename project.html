@@ -136,7 +136,7 @@
   <a href="imprint.html">Imprint &amp; Privacy</a>
 </footer>
 
-<script src="projects.js"></script>
+<script src="projects.js?v=2"></script> <!-- raise ?v= after changing projects.js, so browsers load the new list -->
 <script>
   // Soft page end: when scrolling down reaches the bottom ("next project"), the page does one
   // small bounce instead of stopping dead. Triggered once per arrival, not on every wheel tick.
@@ -154,7 +154,7 @@
     }, { passive: true });
   })();
 </script>
-<script src="cursor.js"></script>
+<script src="cursor.js?v=2"></script>
 <script>
   // Which project? project.html?p=<slug>
   const slug = new URLSearchParams(location.search).get("p");
