@@ -14,13 +14,6 @@ window.PROJECTS = [
     shape: "tall", photos: ["images/longhouse/scene-01.jpg"], ratios: [0.7778]
   },
   {
-    slug: "corner-cafe", title: "Corner Café", category: "Personal work", year: 2026,
-    location: "", services: ["Exterior view, day & evening"],
-    text: "A small café on a street corner in the city centre, seen twice: in the bustle of an autumn afternoon, and again in the evening, once the street has gone quiet.",
-    shape: "", photos: ["images/corner-cafe/scene-01.jpg"], ratios: [1.7778],
-    evening: ["images/corner-cafe/scene-01-evening.jpg"]
-  },
-  {
     slug: "cafe", title: "Café", category: "Personal work", year: 2026,
     location: "", services: ["Concept & floor plan", "Interior views"],
     text: "A bright café with blue as its counterpoint: pale wood, white walls and a deep blue counter that curves through the room. Followed from the first sketch through the floor plan to the final images.",
@@ -33,16 +26,23 @@ window.PROJECTS = [
     shape: "", photos: ["images/bathing-house/scene-01.jpg", "images/bathing-house/scene-02.jpg", "images/bathing-house/scene-03.jpg"], ratios: [1.0, 1.0, 1.0]
   },
   {
+    slug: "office", title: "Office", category: "Personal work", year: 2025,
+    location: "", services: ["Interior view"],
+    text: "A warm office for a single person, shaped by stacks of books, warm materials and the afternoon light falling across the desk.",
+    shape: "", photos: ["images/office/scene-01.jpg"], ratios: [0.8289]
+  },
+  {
     slug: "sailing-house", title: "Sailing House", category: "Personal work", year: 2026,
     location: "", services: ["Exterior view"],
     text: "A long, dark timber house on the edge of a quiet lake, where the boats are kept and set out from. Mist, wind-swept grass and a low sky let the building almost dissolve into the landscape.",
     shape: "", photos: ["images/sailing-house/scene-01.jpg"], ratios: [0.7072]
   },
   {
-    slug: "office", title: "Office", category: "Personal work", year: 2025,
-    location: "", services: ["Interior view"],
-    text: "A warm office for a single person, shaped by stacks of books, warm materials and the afternoon light falling across the desk.",
-    shape: "", photos: ["images/office/scene-01.jpg"], ratios: [0.8289]
+    slug: "corner-cafe", title: "Corner Café", category: "Personal work", year: 2026,
+    location: "", services: ["Exterior view, day & evening"],
+    text: "A small café on a street corner in the city centre, seen twice: in the bustle of an autumn afternoon, and again in the evening, once the street has gone quiet.",
+    shape: "", photos: ["images/corner-cafe/scene-01.jpg"], ratios: [1.7778],
+    evening: ["images/corner-cafe/scene-01-evening.jpg"]
   },
   {
     slug: "kitchen", title: "Kitchen", category: "Personal work", year: 2025,
