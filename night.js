@@ -24,11 +24,11 @@
     .night-toggle svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; }
     .night-toggle .sun, html.night .night-toggle .moon { display: none; }
     html.night .night-toggle .sun { display: block; }
-    /* narrow phones: a little tighter, so logo, menu and moon stay on one line */
-    @media (max-width: 400px) {
-      .top .logo img { width: 124px; }
-      .top .nav { gap: 9px; }
-      .night-toggle { margin-left: 0; }
+    /* phones: the menu bar is full, so the moon moves to the end of the social links in the footer */
+    footer .night-toggle { display: none; margin-left: auto; }
+    @media (max-width: 720px) {
+      .nav .night-toggle { display: none; }
+      footer .night-toggle { display: inline-flex; }
     }`;
   document.head.appendChild(style);
 
@@ -41,7 +41,7 @@
     button.innerHTML = `
       <svg class="moon" viewBox="0 0 16 16"><path d="M13.5 10.2A6 6 0 0 1 5.8 2.5a6 6 0 1 0 7.7 7.7z"/></svg>
       <svg class="sun" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15M3 3l1.1 1.1M11.9 11.9 13 13M3 13l1.1-1.1M11.9 4.1 13 3"/></svg>`;
-    const label = () => button.setAttribute("aria-label", root.classList.contains("night") ? "Switch to day mode" : "Switch to night mode");
+    const label = () => document.querySelectorAll(".night-toggle").forEach(b => b.setAttribute("aria-label", root.classList.contains("night") ? "Switch to day mode" : "Switch to night mode"));
     label();
     const flip = () => {
       const on = root.classList.toggle("night");
@@ -64,5 +64,13 @@
       }
     });
     nav.appendChild(button);
+    // a second one in the footer, used on phones
+    const social = document.querySelector("footer .social");
+    if (social) {
+      const copy = button.cloneNode(true);
+      copy.addEventListener("click", () => button.click());
+      social.appendChild(copy);
+    }
+    label();
   });
 })();

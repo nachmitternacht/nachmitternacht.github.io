@@ -21,7 +21,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="fonts/fonts.css">
-<script src="night.js?v=2"></script>
+<script src="night.js?v=4"></script>
 <!-- TEMPORARY until launch: password screen -->
 <script src="gate.js"></script>
 <style>
@@ -42,7 +42,7 @@
   .top { position: fixed; inset: 0 0 auto 0; z-index: 10; display: flex; justify-content: space-between; align-items: baseline; padding: 22px var(--gutter) 14px; background: var(--bg); }
   /* logo set in Bergamot (images/logo-bergamot-medium.png); the crayon version is kept as images/logo.png */
   .logo { line-height: 0; }
-  .logo img { width: 193px; height: auto; }
+  .logo img { width: 193px; height: auto; transform: translateY(3px); } /* sits a touch lower, in line with the menu */
   .nav { display: flex; gap: 15px; font-size: 14px; }
 
   section { scroll-margin-top: 70px; }
@@ -58,18 +58,20 @@
 
   /* ---------- Start screen: title block centered, location and scroll hint in the corners ---------- */
   /* svh = the screen height with the phone's browser bars showing, so the corner texts are visible on first load */
-  .hero { position: relative; height: 100vh; height: 100svh; min-height: 520px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px var(--gutter); }
+  /* --bars: the height of the phone's browser bars (0 on desktop). The start screen is as tall as the screen with the bars
+     tucked away, so the first project never peeks in; its content sits within the part visible with the bars showing */
+  .hero { --bars: calc(100lvh - 100svh); position: relative; height: 100vh; height: 100lvh; min-height: 520px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px var(--gutter) calc(60px + var(--bars, 0px)); }
   .hero-text { display: grid; justify-items: center; gap: 18px; text-align: center; }
   /* narrow column: the text grows downwards rather than sideways; the title is sized to this width (fitTitle) */
   .intro { width: min(26em, 100%); font-size: 17px; line-height: 1.6; margin: 4px 0 0; text-align: justify; text-align-last: center; hyphens: manual; }
-  .hero .scroll { position: absolute; right: var(--gutter); bottom: 28px; font-size: 14px; }
+  .hero .scroll { position: absolute; right: var(--gutter); bottom: calc(28px + var(--bars, 0px)); font-size: 14px; }
   .title { position: relative; font-size: 20px; font-weight: 560; letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; line-height: 1.25; white-space: nowrap; z-index: 2; }
   /* anchored to the "M" of IMAGES */
   .note-anchor { position: relative; }
   /* "after midnight" set in Bergamot, as an image (images/after-midnight-medium.png) */
   .hand-note { position: absolute; left: -.1em; bottom: 62%; width: 230px; max-width: none; height: auto; transform: rotate(-6deg); transform-origin: left bottom; pointer-events: none; }
   .based { font-size: 14px; }
-  .hero .based { position: absolute; left: var(--gutter); bottom: 28px; max-width: calc(100% - 2 * var(--gutter) - 90px); font-size: 14px; line-height: 1.6; }
+  .hero .based { position: absolute; left: var(--gutter); bottom: calc(28px + var(--bars, 0px)); max-width: calc(100% - 2 * var(--gutter) - 90px); font-size: 14px; line-height: 1.6; }
   .based .soft { color: var(--muted); }
 
 
