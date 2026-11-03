@@ -107,7 +107,7 @@
   .index a { display: grid; grid-template-columns: 3rem 1fr auto; gap: var(--gutter); padding: 10px 0; border-top: 1px solid var(--line); font-size: 15px; color: var(--muted); }
   .index li:last-child a { border-bottom: 1px solid var(--line); }
   .index a b { font-weight: inherit; color: var(--fg); }
-  .peek { position: fixed; z-index: 5; width: 220px; aspect-ratio: 4 / 3; pointer-events: none; opacity: 0; transition: opacity .15s; }
+  .peek { position: fixed; z-index: 5; width: 220px; height: 165px; pointer-events: none; opacity: 0; transition: opacity .15s; }
 
 
   /* ---------- Contact ---------- */
@@ -323,9 +323,14 @@
     const li = document.createElement("li");
     li.innerHTML = `<a href="${url}"><span>${n}</span><b>${p.title}</b><span>${meta}</span></a>`;
     const a = li.firstElementChild;
-    a.onmouseenter = () => { peek.style.background = previewBackground(p, i); peek.style.opacity = 1; };
+    // the preview keeps the project's own format, so nothing is cut off; every format covers about the same area,
+    // so a wide picture doesn't look smaller than a tall one
+    const r = p.photos ? p.ratios[0] : 4 / 3, w = Math.round(190 * Math.sqrt(r)), h = Math.round(190 / Math.sqrt(r));
+    a.onmouseenter = () => {
+      Object.assign(peek.style, { background: previewBackground(p, i), width: w + "px", height: h + "px", opacity: 1 });
+    };
     a.onmouseleave = () => { peek.style.opacity = 0; };
-    a.onmousemove = e => { peek.style.left = e.clientX + 24 + "px"; peek.style.top = e.clientY - 80 + "px"; };
+    a.onmousemove = e => { peek.style.left = e.clientX + 24 + "px"; peek.style.top = e.clientY - h / 2 + "px"; };
     index.appendChild(li);
   });
   fadeIn(grid);
