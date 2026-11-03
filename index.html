@@ -78,20 +78,20 @@
 
   /* ---------- Work: staggered gallery ---------- */
   .works { display: grid; gap: 16vh; padding-top: 16vh; }
-  .work { margin: 0; width: 50%; }
+  .work { margin: 0; width: 46%; }
   /* right-hand images sit flush with the right margin, mirroring the left-hand ones */
-  .work:nth-child(3n+2) { justify-self: end; width: 42%; }
+  .work:nth-child(3n+2) { justify-self: end; width: 39%; }
   .work:nth-child(3n+2) a { display: flex; flex-direction: column; align-items: flex-end; }
-  .work:nth-child(3n) { margin-left: 25%; width: 38%; }
+  .work:nth-child(3n) { margin-left: 25%; width: 35%; }
   /* wide (landscape) images would look small in these columns, so they get more room */
-  .work.landscape, .work.landscape:nth-child(3n+2) { width: 62%; }
-  .work.landscape:nth-child(3n) { margin-left: 18%; width: 62%; }
+  .work.landscape, .work.landscape:nth-child(3n+2) { width: 58%; }
+  .work.landscape:nth-child(3n) { margin-left: 18%; width: 58%; }
   .work a { display: block; }
   .ph { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; }
   /* real photos: the frame takes the photo's own proportions, so nothing is cropped */
-  /* ...and is never taller than the screen (minus the header), so it can be seen in one piece */
+  /* ...and is never taller than the screen minus generous white space above and below, so it can be seen in one piece */
   /* the frame is sized from the photo's ratio (--r) before the image loads, so nothing jumps while scrolling */
-  .ph.natural { aspect-ratio: var(--r); width: min(100%, calc((100vh - 160px) * var(--r))); }
+  .ph.natural { aspect-ratio: var(--r); width: min(100%, calc((100vh - 300px) * var(--r))); }
   .ph .img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(.2, .7, .2, 1), opacity .8s ease; will-change: transform; }
   /* while the page is scrolling, hover effects pause so nothing animates under the moving pointer */
   .is-scrolling main { pointer-events: none; }
@@ -177,6 +177,8 @@
     .top { align-items: flex-end; flex-wrap: wrap; gap: 6px; }
     .logo img { width: 140px; }
     .nav { line-height: 1; }
+    /* phones: the images keep the full width, only kept short enough to fit under the header */
+    .ph.natural { width: min(100%, calc((100svh - 160px) * var(--r))); }
     /* centred rather than justified: in such a narrow column justified lines get wide gaps */
     .hero .intro { width: 64vw; font-size: 15px; text-align: center; } /* leaves room for the note to break out on the right */
     .hand-note { width: 140px; }
