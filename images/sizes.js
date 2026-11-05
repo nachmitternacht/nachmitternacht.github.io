@@ -1,0 +1,22 @@
+// Made by tools/make-image-sizes.sh: the widths each image exists in (smaller copies are named image-800.jpg …)
+window.IMAGE_WIDTHS = {
+  "images/bathing-house/scene-01-preview.jpg": [800, 1200, 1600],
+  "images/bathing-house/scene-01.jpg": [800, 1200, 2400],
+  "images/bathing-house/scene-02.jpg": [800, 1200, 2400],
+  "images/bathing-house/scene-03.jpg": [800, 1200, 2400],
+  "images/cafe/floor-plan.jpg": [800, 1200, 2400],
+  "images/cafe/scene-01-preview.jpg": [800, 1200, 1600],
+  "images/cafe/scene-01.jpg": [800, 1200, 2400],
+  "images/cafe/scene-02.jpg": [800, 1200, 2400],
+  "images/corner-cafe/scene-01-evening.jpg": [800, 1200, 2400],
+  "images/corner-cafe/scene-01-preview.jpg": [800, 1200, 1600],
+  "images/corner-cafe/scene-01.jpg": [800, 1200, 2400],
+  "images/kitchen/scene-01-preview.jpg": [800, 1200, 1600],
+  "images/kitchen/scene-01.jpg": [800, 1200, 1800],
+  "images/longhouse/scene-01-preview.jpg": [800, 1244],
+  "images/longhouse/scene-01.jpg": [800, 1200, 1680],
+  "images/office/scene-01-preview.jpg": [800, 1326],
+  "images/office/scene-01.jpg": [800, 1200, 1791],
+  "images/sailing-house/scene-01-preview.jpg": [800, 1131],
+  "images/sailing-house/scene-01.jpg": [800, 1200, 1697],
+};

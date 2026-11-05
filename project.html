@@ -21,6 +21,8 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<!-- the main font starts loading right away, before the stylesheet asks for it, so text doesn't flash in a fallback font -->
+<link rel="preload" href="fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts/fonts.css">
 <script src="night.js?v=4"></script>
 <!-- TEMPORARY until launch: password screen -->
@@ -76,14 +78,20 @@
   .daynight .toggle:hover, .daynight .toggle:focus-visible { color: var(--fg); transform: scale(1.1); outline: none; }
   .daynight .toggle svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; }
   .daynight .sun, .daynight.is-evening .moon { display: none; }
+  /* once, when the image first comes into view: the moon lights up briefly, so it isn't overlooked */
+  @keyframes glimmer {
+    0%, 100% { color: var(--muted); transform: none; filter: none; }
+    45% { color: var(--fg); transform: scale(1.3); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--fg) 45%, transparent)); }
+  }
+  .daynight .toggle.glimmer { animation: glimmer 1.6s ease-in-out .9s 2; }
   .daynight.is-evening .sun { display: block; }
   .ph.wide { aspect-ratio: 16 / 9; }
   .ph span { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: rgba(255,255,255,.75); }
 
-  /* Next project */
-  .next { margin: 22vh var(--gutter) 0; padding-top: 18px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 2fr; gap: var(--gutter); }
-  /* the next project's title ends flush right, on the same line as "Shop" and the images */
-  .next a { justify-self: end; text-align: right; }
+  /* Previous and next project: previous on the left, next flush right (on the same line as "Shop" and the images) */
+  .next { margin: 22vh var(--gutter) 0; padding-top: 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: flex-end; gap: var(--gutter); }
+  .next a { display: grid; gap: 6px; }
+  .next a.to-next { text-align: right; justify-items: end; }
   .next .label { font-size: 14px; color: var(--muted); }
   .next .name { display: inline-block; font-size: 24px; letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; line-height: 1.3; }
 
@@ -94,7 +102,8 @@
   .nav a:hover, .logo:hover, footer a:hover, .back:hover, .next a:hover .name {
     transform: scale(1.02); }
   .logo, .back { transform-origin: left center; }
-  footer a, .next .name { transform-origin: right center; }
+  footer a, .next .to-next .name { transform-origin: right center; }
+  .next .to-prev .name { transform-origin: left center; margin-right: 0; }
 
   /* small bounce at the page end (see script) */
   /* spring-like: lifts, settles back with a tiny, fading overshoot */
@@ -127,7 +136,8 @@
     .info { position: static; margin-bottom: 20px; }
     h1, .next .name { font-size: 19px; letter-spacing: .22em; margin-right: 0; }
     .ph.tall { width: 100%; }
-    .next { grid-template-columns: 1fr; }
+    .next { flex-direction: column; align-items: stretch; gap: 28px; }
+    .next a.to-next { order: -1; } /* on phones the next project comes first, the previous one below it */
   }
 
   /* soft cross-fade between pages (browsers without support simply switch); the header stays in place */
@@ -160,7 +170,8 @@
   <a href="imprint.html">Imprint &amp; Privacy</a>
 </footer>
 
-<script src="projects.js?v=4"></script> <!-- raise ?v= after changing projects.js, so browsers load the new list -->
+<script src="images/sizes.js?v=1"></script>
+<script src="projects.js?v=5"></script> <!-- raise ?v= after changing projects.js, so browsers load the new list -->
 <script>
   // Soft page end: when scrolling down reaches the bottom ("next project"), the page does one
   // small bounce instead of stopping dead. Triggered once per arrival, not on every wheel tick.
@@ -191,6 +202,7 @@
   } else {
     const p = PROJECTS[i];
     const next = PROJECTS[(i + 1) % PROJECTS.length];
+    const prev = PROJECTS[(i - 1 + PROJECTS.length) % PROJECTS.length];
     const pad = n => String(n + 1).padStart(2, "0");
     document.title = `${p.title} — nach.mitternacht`;
 
@@ -229,8 +241,12 @@
       </section>
 
       <section class="next">
-        <p class="label">Next project</p>
-        <a href="project.html?p=${next.slug}">
+        <a class="to-prev" href="project.html?p=${prev.slug}">
+          <span class="label">Previous project</span>
+          <span class="name">← ${prev.title}</span>
+        </a>
+        <a class="to-next" href="project.html?p=${next.slug}">
+          <span class="label">Next project</span>
           <span class="name">${next.title} →</span>
         </a>
       </section>`;
@@ -250,6 +266,16 @@
       // in night mode the evening scene is shown from the start, and switching the mode switches the scene too
       set(document.documentElement.classList.contains("night"));
       addEventListener("nightchange", e => set(e.detail));
+      // a brief glimmer of the moon the first time it comes into view
+      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const seen = new IntersectionObserver(([entry]) => {
+          if (!entry.isIntersecting) return;
+          seen.disconnect();
+          button.classList.add("glimmer");
+          button.addEventListener("animationend", () => button.classList.remove("glimmer"), { once: true });
+        }, { threshold: 1 });
+        seen.observe(button);
+      }
     });
   }
 </script>

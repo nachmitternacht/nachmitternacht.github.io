@@ -58,7 +58,7 @@ window.paintPlaceholder = ([sky, haze, ground], variant) =>
    linear-gradient(to bottom, transparent ${60 + (variant * 7) % 12}%, ${ground} ${60 + (variant * 7) % 12}%),
    linear-gradient(to bottom, ${sky}, ${haze})`;
 
-// Lighter copy of the first photo for the gallery and index (same name + "-preview", max. 1200 px)
+// Lighter copy of the first photo for the gallery and index (same name + "-preview", max. 1600 px)
 window.previewSrc = project => project.photos[0].replace(/\.jpg$/, "-preview.jpg");
 
 // Background for small previews (index hover, "next project"): the first photo, or the placeholder gradient
@@ -70,7 +70,13 @@ window.previewBackground = (project, variant) => project.photos
 window.projectMeta = project => [project.category, project.year].filter(Boolean).join(", ");
 
 // <img> markup for a photo (kept in one place so the format can be changed later)
-window.picture = (src, attrs) => `<img src="${src}" ${attrs}>`;
+// Each image also exists in smaller widths (images/sizes.js, made by tools/make-image-sizes.sh):
+// the browser picks the smallest one that is still sharp on this screen, so phones load far less
+window.picture = (src, attrs) => {
+  const widths = (window.IMAGE_WIDTHS || {})[src];
+  const set = widths && widths.map((w, k) => `${k < widths.length - 1 ? src.replace(/\.jpg$/, `-${w}.jpg`) : src} ${w}w`).join(", ");
+  return `<img src="${src}"${set ? ` srcset="${set}" sizes="(max-width: 760px) 100vw, 60vw"` : ""} ${attrs}>`;
+};
 
 // Images with class "fade" fade in once loaded (ones already in the browser's cache simply appear)
 window.fadeIn = root => root.querySelectorAll("img.fade").forEach(img => {
