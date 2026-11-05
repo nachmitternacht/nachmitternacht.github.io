@@ -1,5 +1,5 @@
 // Custom cursor shared by all pages: a small dark dot that follows the mouse.
-// Over anything clickable (links, buttons, project images) it turns into a milky, see-through disc of the same size.
+// Over anything clickable (links, buttons, project images, images that open in full screen) it turns into a milky, see-through disc of the same size.
 // Over text fields it disappears and the normal text cursor takes over.
 // When the mouse leaves the page (browser bar, other windows, switching desktops) the dot fades out instead of waiting at the edge.
 // Only on devices with a real mouse — touch screens keep their normal behaviour.
@@ -29,7 +29,7 @@
   dot.setAttribute("aria-hidden", "true");
   document.body.appendChild(dot);
 
-  const CLICKABLE = "a, button, select, .select", TEXT = "input, textarea";
+  const CLICKABLE = "a, button, select, .select, .photo", TEXT = "input, textarea";
   let x = 0, y = 0, dx = 0, dy = 0, last = 0, running = false, inside = false, overText = false;
 
   // the dot is only visible while the mouse is on the page and not over a text field

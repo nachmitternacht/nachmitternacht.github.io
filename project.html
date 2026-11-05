@@ -78,14 +78,16 @@
   .daynight .toggle:hover, .daynight .toggle:focus-visible { color: var(--fg); transform: scale(1.1); outline: none; }
   .daynight .toggle svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; }
   .daynight .sun, .daynight.is-evening .moon { display: none; }
-  /* once, when the image first comes into view: the moon lights up briefly, so it isn't overlooked */
-  @keyframes glimmer {
-    0%, 100% { color: var(--muted); transform: none; filter: none; }
-    45% { color: var(--fg); transform: scale(1.3); filter: drop-shadow(0 0 4px color-mix(in srgb, var(--fg) 45%, transparent)); }
-  }
-  .daynight .toggle.glimmer { animation: glimmer 1.6s ease-in-out .9s 2; }
   .daynight.is-evening .sun { display: block; }
   .ph.wide { aspect-ratio: 16 / 9; }
+  /* Full screen: a click on an image shows it as large as the screen allows, on the page colour; a click or Esc closes it */
+  .lightbox { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 24px;
+              background: var(--bg); opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s .35s; }
+  .lightbox.open { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+  .lightbox img { max-width: 100%; max-height: 100%; width: auto; height: auto; transform: scale(.985); transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
+  .lightbox.open img { transform: none; }
+  .lightbox .close { position: absolute; top: 22px; right: var(--gutter); padding: 0; border: 0; background: none; color: var(--fg); font: inherit; font-size: 14px; }
+  html.lightbox-open { overflow: hidden; }
   .ph span { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: rgba(255,255,255,.75); }
 
   /* Previous and next project: previous on the left, next flush right (on the same line as "Shop" and the images) */
@@ -159,6 +161,10 @@
 </header>
 
 <main id="main"></main>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image in full screen">
+  <img alt="">
+  <button class="close" type="button">Close</button>
+</div>
 
 <footer>
   <nav class="social" aria-label="Social media">
@@ -189,7 +195,7 @@
     }, { passive: true });
   })();
 </script>
-<script src="cursor.js?v=5"></script>
+<script src="cursor.js?v=6"></script>
 <script>
   // Which project? project.html?p=<slug>
   const slug = new URLSearchParams(location.search).get("p");
@@ -266,17 +272,30 @@
       // in night mode the evening scene is shown from the start, and switching the mode switches the scene too
       set(document.documentElement.classList.contains("night"));
       addEventListener("nightchange", e => set(e.detail));
-      // a brief glimmer of the moon the first time it comes into view
-      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        const seen = new IntersectionObserver(([entry]) => {
-          if (!entry.isIntersecting) return;
-          seen.disconnect();
-          button.classList.add("glimmer");
-          button.addEventListener("animationend", () => button.classList.remove("glimmer"), { once: true });
-        }, { threshold: 1 });
-        seen.observe(button);
-      }
     });
+
+    // full screen: the image that is showing (with a day/evening pair, the one currently visible), in its full size
+    const box = document.getElementById("lightbox"), big = box.querySelector("img");
+    let opener = null;
+    const close = () => {
+      box.classList.remove("open");
+      document.documentElement.classList.remove("lightbox-open");
+      if (opener) opener.focus({ preventScroll: true });
+    };
+    main.addEventListener("click", e => {
+      const photo = e.target.closest(".photo");
+      if (!photo) return;
+      const pair = photo.closest(".daynight");
+      const shown = pair ? pair.querySelectorAll(".photo")[pair.classList.contains("is-evening") ? 1 : 0] : photo;
+      big.src = shown.getAttribute("src");
+      big.alt = shown.alt;
+      opener = pair ? pair.querySelector(".toggle") : null;
+      document.documentElement.classList.add("lightbox-open");
+      box.classList.add("open");
+      box.querySelector(".close").focus({ preventScroll: true });
+    });
+    box.addEventListener("click", close);
+    addEventListener("keydown", e => { if (e.key === "Escape" && box.classList.contains("open")) close(); });
   }
 </script>
 </body>
