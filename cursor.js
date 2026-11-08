@@ -29,7 +29,7 @@
 
   // the dot takes the text colour of the page, so it is light in night mode
   const paint = () => {
-    const fg = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim() || "#151515";
+    const fg = document.documentElement.classList.contains("night") ? "#e8e5de" : "#151515";
     const dot = cursor(DOT, (c, mid) => { circle(c, mid, DOT / 2); c.fillStyle = fg; c.fill(); });
     // light milky glass; a faint rim keeps it visible on white
     const disc = cursor(DISC, (c, mid) => {

@@ -7,13 +7,20 @@
 
   const style = document.createElement("style");
   style.textContent = `
-    html.night { --bg: #121211; --fg: #e8e5de; --muted: #7f7c76; --line: #2c2b28; color-scheme: dark; }
+    /* registered, so the browser can fade these values themselves: one value changes, and everything that uses it follows in step */
+    @property --bg { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+    @property --fg { syntax: "<color>"; inherits: true; initial-value: #151515; }
+    @property --muted { syntax: "<color>"; inherits: true; initial-value: #9a9a9a; }
+    @property --line { syntax: "<color>"; inherits: true; initial-value: #e4e4e4; }
+    @property --dark { syntax: "<number>"; inherits: true; initial-value: 0; }
+    html.night { --bg: #121211; --fg: #e8e5de; --muted: #7f7c76; --line: #2c2b28; --dark: 1; color-scheme: dark; }
     /* the hand-lettered logo and note are black images: shown light at night */
-    html.night .logo img, html.night .hand-note { filter: invert(.91); }
-    /* switching: only the colours ease over, slowly (like dusk falling), so the images themselves stay perfectly still;
-       opacity is included so the evening scene of the Corner Café fades in the same rhythm */
-    html.night-fade, html.night-fade *, html.night-fade *::before, html.night-fade *::after {
-      transition: background-color 1.4s ease, color 1.4s ease, border-color 1.4s ease, filter 1.4s ease, opacity 1.4s ease !important; }
+    .logo img, .hand-note { filter: invert(calc(var(--dark) * .91)); }
+    /* switching: only these shared values fade, so the whole page changes as one, and no element fades on its own */
+    html.night-fade { transition: --bg .8s ease, --fg .8s ease, --muted .8s ease, --line .8s ease, --dark .8s ease; }
+    html.night-fade *, html.night-fade *::before, html.night-fade *::after { transition: none !important; }
+    /* the evening scene of the Corner Café fades in the same rhythm */
+    html.night-fade .daynight .stack .photo + .photo { transition: opacity .8s ease !important; }
     .night-toggle { display: inline-flex; align-items: center; width: 14px; height: 14px; margin-left: 4px; padding: 0; border: 0; background: none;
                     color: var(--fg); align-self: center; transition: transform .4s cubic-bezier(.2, .7, .2, 1); }
     .night-toggle:hover { transform: scale(1.12); }
@@ -51,7 +58,7 @@
       root.classList.add("night-fade");
       flip();
       clearTimeout(fading);
-      fading = setTimeout(() => root.classList.remove("night-fade"), 1500);
+      fading = setTimeout(() => root.classList.remove("night-fade"), 900);
     });
     nav.appendChild(button);
     // a second one in the footer, used on phones
