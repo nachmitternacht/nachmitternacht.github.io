@@ -17,10 +17,11 @@
     /* the hand-lettered logo and note are black images: shown light at night */
     .logo img, .hand-note { filter: invert(calc(var(--dark) * .91)); }
     /* switching: only these shared values fade, so the whole page changes as one, and no element fades on its own */
-    html.night-fade { transition: --bg .8s ease, --fg .8s ease, --muted .8s ease, --line .8s ease, --dark .8s ease; }
+    /* the curve is symmetric and steep in the middle: text and background pass through the same grey there, so that moment has to be short or the text seems to vanish and arrive late */
+    html.night-fade { transition: --bg .7s cubic-bezier(.6, 0, .4, 1), --fg .7s cubic-bezier(.6, 0, .4, 1), --muted .7s cubic-bezier(.6, 0, .4, 1), --line .7s cubic-bezier(.6, 0, .4, 1), --dark .7s cubic-bezier(.6, 0, .4, 1); }
     html.night-fade *, html.night-fade *::before, html.night-fade *::after { transition: none !important; }
     /* the evening scene of the Corner Café fades in the same rhythm */
-    html.night-fade .daynight .stack .photo + .photo { transition: opacity .8s ease !important; }
+    html.night-fade .daynight .stack .photo + .photo { transition: opacity .7s cubic-bezier(.6, 0, .4, 1) !important; }
     .night-toggle { display: inline-flex; align-items: center; width: 14px; height: 14px; margin-left: 4px; padding: 0; border: 0; background: none;
                     color: var(--fg); align-self: center; transition: transform .4s cubic-bezier(.2, .7, .2, 1); }
     .night-toggle:hover { transform: scale(1.12); }
@@ -58,7 +59,7 @@
       root.classList.add("night-fade");
       flip();
       clearTimeout(fading);
-      fading = setTimeout(() => root.classList.remove("night-fade"), 900);
+      fading = setTimeout(() => root.classList.remove("night-fade"), 800);
     });
     nav.appendChild(button);
     // a second one in the footer, used on phones
