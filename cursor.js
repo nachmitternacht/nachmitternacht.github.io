@@ -1,73 +1,46 @@
-// Custom cursor shared by all pages: a small dark dot that follows the mouse.
+// Custom cursor shared by all pages: a small dark dot instead of the arrow.
 // Over anything clickable (links, buttons, project images, images that open in full screen) it turns into a milky, see-through disc of the same size.
-// Over text fields it disappears and the normal text cursor takes over.
-// When the mouse leaves the page (browser bar, other windows, switching desktops) the dot fades out instead of waiting at the edge.
+// Over text fields the normal text cursor takes over.
+// The dot is a real system cursor (an image the browser hands to the operating system), not an element following the mouse:
+// it never lags, and the pointer can't go missing when switching to another app or desktop.
 // Only on devices with a real mouse — touch screens keep their normal behaviour.
 (() => {
   if (!matchMedia("(pointer: fine)").matches) return;
 
+  const DOT = 14, DISC = 16; // size on screen, in px
+
+  // draws a cursor at normal and double resolution; the sharper one is used on Retina screens
+  const cursor = (size, paint) => {
+    const url = scale => {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = size * scale;
+      const c = canvas.getContext("2d");
+      c.scale(scale, scale);
+      paint(c, size / 2);
+      return `url("${canvas.toDataURL()}")`;
+    };
+    const one = url(1), two = url(2), spot = `${size / 2} ${size / 2}, auto`;
+    return `cursor: ${one} ${spot}; cursor: -webkit-image-set(${one} 1x, ${two} 2x) ${spot}; cursor: image-set(${one} 1x, ${two} 2x) ${spot};`;
+  };
+  const circle = (c, mid, r) => { c.beginPath(); c.arc(mid, mid, r, 0, 2 * Math.PI); };
+
   const style = document.createElement("style");
-  style.textContent = `
-    html, a, button, select, label, .select, .select * { cursor: none; }
-    input, textarea { cursor: text; }
-    .cursor-dot {
-      position: fixed; left: -7px; top: -7px; z-index: 1000; pointer-events: none; will-change: transform;
-      width: 14px; height: 14px; border-radius: 50%;
-      background: var(--fg, #151515);
-      transition: background-color .25s ease, box-shadow .25s ease, opacity .2s ease;
-    }
-    /* light milky glass (no backdrop blur: it would have to be redrawn on every scroll frame); a faint rim keeps it visible */
-    .cursor-dot.is-link {
-      background: rgba(255, 255, 255, .26);
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .6), 0 0 0 1px rgba(21, 21, 21, .12);
-    }
-    .cursor-dot.is-hidden { opacity: 0; }`;
   document.head.appendChild(style);
 
-  const dot = document.createElement("div");
-  dot.className = "cursor-dot is-hidden";
-  dot.setAttribute("aria-hidden", "true");
-  document.body.appendChild(dot);
-
-  const CLICKABLE = "a, button, select, .select, .photo", TEXT = "input, textarea";
-  let x = 0, y = 0, dx = 0, dy = 0, last = 0, running = false, inside = false, overText = false;
-
-  // the dot is only visible while the mouse is on the page and not over a text field
-  const update = () => dot.classList.toggle("is-hidden", !inside || overText);
-
-  // the dot glides after the mouse instead of jumping to it: each frame it covers part of the remaining way,
-  // timed by the clock so it feels the same on 60 Hz and 120 Hz screens; moved with a GPU transform, so the page never re-lays out
-  const place = () => { dot.style.transform = `translate3d(${dx}px, ${dy}px, 0)`; };
-  const step = now => {
-    const t = 1 - Math.exp(-(now - last) / 16); // about 16 ms to close most of the gap
-    last = now;
-    dx += (x - dx) * t; dy += (y - dy) * t;
-    if (Math.abs(x - dx) < .1 && Math.abs(y - dy) < .1) { dx = x; dy = y; running = false; }
-    place();
-    if (running) requestAnimationFrame(step);
+  // the dot takes the text colour of the page, so it is light in night mode
+  const paint = () => {
+    const fg = getComputedStyle(document.documentElement).getPropertyValue("--fg").trim() || "#151515";
+    const dot = cursor(DOT, (c, mid) => { circle(c, mid, DOT / 2); c.fillStyle = fg; c.fill(); });
+    // light milky glass; a faint rim keeps it visible on white
+    const disc = cursor(DISC, (c, mid) => {
+      circle(c, mid, DISC / 2 - .5); c.strokeStyle = "rgba(21, 21, 21, .12)"; c.stroke();
+      circle(c, mid, DOT / 2 - .5); c.fillStyle = "rgba(255, 255, 255, .26)"; c.fill(); c.strokeStyle = "rgba(255, 255, 255, .6)"; c.stroke();
+    });
+    style.textContent = `
+      html, label { ${dot} }
+      a, button, select, .select, .select *, .photo { ${disc} }
+      input, textarea { cursor: text; }`;
   };
-
-  addEventListener("mousemove", e => {
-    x = e.clientX; y = e.clientY;
-    if (!inside) {
-      // coming back onto the page: appear right at the mouse, never sliding in from where it left
-      dx = x; dy = y; place();
-      inside = true; update();
-    }
-    if (!running) { running = true; last = performance.now(); requestAnimationFrame(step); }
-  }, { passive: true });
-
-  addEventListener("mouseover", e => {
-    const t = e.target;
-    dot.classList.toggle("is-link", !!t.closest(CLICKABLE));
-    overText = !!t.closest(TEXT);
-    update();
-  });
-
-  // leaving the page: out of the window, into the browser bar, or the window losing focus / being hidden
-  const leave = () => { inside = false; update(); };
-  addEventListener("mouseout", e => { if (!e.relatedTarget) leave(); });
-  document.addEventListener("mouseleave", leave);
-  addEventListener("blur", leave);
-  document.addEventListener("visibilitychange", () => { if (document.hidden) leave(); });
+  paint();
+  addEventListener("nightchange", paint);
 })();
